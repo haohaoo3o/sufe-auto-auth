@@ -2,55 +2,163 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>上财自动滑块 · 设置</title>
+<title>上财自动登录 · 设置</title>
 <style>
-  body {
-    min-width: 300px;
-    margin: 0;
-    padding: 14px 16px;
-    font: 13px/1.6 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
-    color: #222;
-    background: #fff;
+  @font-face {
+    font-family: "SufePixel";
+    src: url("fonts/press-start-2p.ttf") format("truetype");
+    font-display: swap;
   }
-  h3 { margin: 0 0 10px; font-size: 15px; color: #1c3f94; }
-  label { display: block; margin: 10px 0 4px; color: #555; font-size: 12px; }
+  @font-face {
+    font-family: "SufeHei";
+    src: url("fonts/source-han-sans-sc-bold-subset.woff2") format("woff2");
+    font-weight: 700;
+    font-display: swap;
+  }
+  :root { color-scheme: dark; }
+  html { background: transparent; }
+  body {
+    width: 340px;
+    margin: 0;
+    padding: 16px;
+    overflow-x: hidden;
+    color: #7dffb2;
+    background: linear-gradient(145deg, rgba(3, 15, 11, 0.6), rgba(4, 23, 16, 0.5) 58%, rgba(2, 11, 8, 0.64));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    backdrop-filter: blur(22px) saturate(125%);
+    -webkit-backdrop-filter: blur(22px) saturate(125%);
+    font: 700 12px/1.7 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    letter-spacing: 0.02em;
+    -webkit-font-smoothing: none;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(125, 255, 178, 0.025) 0 1px, transparent 1px 4px);
+  }
+  .matrix-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0.18;
+  }
+  .matrix-bg pre {
+    position: absolute;
+    top: 26px;
+    right: -4px;
+    margin: 0;
+    font: 8px/1.25 "SufePixel", monospace;
+    background: linear-gradient(100deg, #c0ffd7, #45d78c 48%, transparent 94%);
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient 6s ease-in-out infinite alternate;
+  }
+  .matrix-bg .wavechar { display: inline-block; min-width: 1ch; text-align: center; transition: opacity 80ms linear; }
+  .matrix-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(125, 255, 178, 0.07) 0 1px, transparent 1px 3px);
+    mix-blend-mode: screen;
+    animation: crt-flicker 180ms steps(2, end) infinite;
+  }
+  .matrix-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, transparent 46%, rgba(125, 255, 178, 0.1) 50%, transparent 54%),
+      radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.5) 100%);
+    background-size: 100% 260%, 100% 100%;
+    animation: scan 3.2s linear infinite, crt-flicker 260ms steps(2, end) infinite;
+  }
+  body > :not(.matrix-bg) { position: relative; z-index: 1; }
+  h3 {
+    margin: 0 0 14px;
+    color: #c0ffd7;
+    font-size: 14px;
+    font-weight: 400;
+    text-shadow: 0 0 14px rgba(125, 255, 178, 0.35);
+  }
+  h3::before { content: ">_ "; color: #45d78c; }
+  label { display: block; margin: 10px 0 4px; color: rgba(125, 255, 178, 0.66); font-size: 10px; }
   input[type="text"], input[type="password"] {
     width: 100%;
     box-sizing: border-box;
-    padding: 6px 8px;
-    border: 1px solid #cdd5e1;
-    border-radius: 6px;
-    font: inherit;
+    padding: 7px 9px;
+    color: #c0ffd7;
+    caret-color: #7dffb2;
+    background: rgba(0, 8, 5, 0.62);
+    border: 1px solid rgba(125, 255, 178, 0.25);
+    border-radius: 7px;
+    outline: none;
+    font: 700 12px/1.5 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   }
+  input:focus { border-color: #7dffb2; box-shadow: 0 0 16px rgba(69, 215, 140, 0.14); }
   .pwd-wrap { position: relative; }
   .pwd-wrap input { padding-right: 54px; }
   .pwd-toggle {
-    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
-    flex: none; width: auto; padding: 2px 8px; font-size: 11px;
-    border: none; background: transparent; color: #1c3f94; cursor: pointer;
-  }
-  .pwd-toggle:hover { background: transparent; text-decoration: underline; }
-  .row { display: flex; align-items: center; gap: 6px; margin: 12px 0 4px; font-size: 12px; color: #555; }
-  .btns { display: flex; gap: 8px; margin-top: 14px; }
-  button {
-    flex: 1;
-    padding: 7px 0;
-    font: inherit;
-    border: 1px solid #cdd5e1;
-    background: #f5f7fb;
-    border-radius: 6px;
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    padding: 2px 6px;
+    color: #45d78c;
+    background: transparent;
+    border: none;
+    font-size: 10px;
     cursor: pointer;
   }
-  button.primary { background: #1c3f94; border-color: #1c3f94; color: #fff; }
-  button.primary:hover { background: #16347a; }
-  #status { margin-top: 10px; font-size: 12px; color: #1a7f37; white-space: pre-wrap; word-break: break-all; }
-  #status.err { color: #c0392b; }
-  #stats { margin-top: 6px; font-size: 11px; color: #98a1ad; }
-  .tip { margin-top: 12px; font-size: 11px; color: #98a1ad; line-height: 1.5; }
+  .pwd-toggle:hover { color: #c0ffd7; background: transparent; }
+  .row { display: flex; align-items: flex-start; gap: 7px; margin: 13px 0 4px; color: rgba(125, 255, 178, 0.7); font-size: 10px; }
+  .row input { margin-top: 4px; accent-color: #45d78c; }
+  .row label { margin: 0; line-height: 1.6; }
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+  button {
+    padding: 7px 4px;
+    color: #7dffb2;
+    background: linear-gradient(135deg, rgba(69, 215, 140, 0.12), rgba(69, 215, 140, 0.03));
+    border: 1px solid rgba(125, 255, 178, 0.28);
+    border-radius: 7px;
+    font: 700 11px/1.5 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    cursor: pointer;
+  }
+  button:hover { border-color: rgba(125, 255, 178, 0.72); box-shadow: 0 0 14px rgba(69, 215, 140, 0.16); }
+  button.primary {
+    color: #02140b;
+    border-color: rgba(192, 255, 215, 0.8);
+    background: linear-gradient(135deg, #c0ffd7, #45d78c);
+    box-shadow: 0 0 18px rgba(69, 215, 140, 0.2);
+  }
+  #status { margin-top: 12px; color: #7dffb2; font-size: 10px; white-space: pre-wrap; word-break: break-word; }
+  #status.err { color: #c0ffd7; text-shadow: 0 0 10px rgba(192, 255, 215, 0.4); }
+  #stats { margin-top: 7px; color: rgba(125, 255, 178, 0.48); font-size: 9px; }
+  .tip { margin-top: 13px; color: rgba(125, 255, 178, 0.45); font-size: 9px; line-height: 1.65; }
+  @keyframes crt-flicker { 0%, 100% { opacity: 0.86; } 50% { opacity: 0.72; } }
+  @keyframes scan { from { background-position: 0 -160%, 0 0; } to { background-position: 0 100%, 0 0; } }
+  @keyframes gradient { from { background-position: 0% 0%; } to { background-position: 100% 100%; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+  }
 </style>
 </head>
 <body>
-<h3>上财自动滑块</h3>
+<div class="matrix-bg" aria-hidden="true"><pre> ███  █   █ █████ █████
+█     █   █ █     █
+█     █   █ █     █
+ ███  █   █ ████  ████
+    █ █   █ █     █
+    █ █   █ █     █
+████   ███  █     █████</pre></div>
+<h3>上财自动登录</h3>
 
 <label for="username">学号</label>
 <input type="text" id="username" autocomplete="off" spellcheck="false">
@@ -63,12 +171,13 @@
 
 <div class="row">
   <input type="checkbox" id="enabled">
-  <label for="enabled" style="margin:0">自动登录：检测到上财登录页时自动过滑块并登录</label>
+  <label for="enabled">自动登录：检测到上财登录页时自动完成验证并登录</label>
 </div>
 
 <div class="btns">
   <button id="save" class="primary">保存</button>
   <button id="login">登录</button>
+  <button id="testvcode">测试验证码</button>
   <button id="test">测试滑块</button>
 </div>
 
@@ -76,8 +185,9 @@
 <div id="stats"></div>
 
 <div class="tip">
+  2 秒倒计时内后台预破解；未手动操作即自动进入。<br>
   「登录」直接在当前上财登录页执行（页面未注入脚本时会自动注入，无需刷新）；<br>
-  「测试滑块」只验证滑块可用性、不提交账号。若多轮未通过，多为学校风控收紧期，请稍后再试。
+  「测试验证码」「测试滑块」只验证识别/定位能力，不提交账号。字符验证码连续低置信度时会在页面浮窗中请你人工输入。
 </div>
 
 <script src="popup.js"></script>

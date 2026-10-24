@@ -1,78 +1,305 @@
-#sufe-auto-slider-widget {
-  position: fixed;
-  top: 14px;
-  right: 14px;
-  z-index: 2147483647;
-  width: 264px;
-  box-sizing: border-box;
-  padding: 12px 14px;
-  background: #ffffff;
-  color: #222;
-  font: 13px/1.55 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
-  text-align: left;
-  border: 1px solid #e3e6ee;
-  border-radius: 10px;
-  box-shadow: 0 6px 24px rgba(20, 40, 90, 0.18);
+@font-face {
+  font-family: "SufePixel";
+  src: url("fonts/press-start-2p.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "SufeHei";
+  src: url("fonts/source-han-sans-sc-bold-subset.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
 }
 
-#sufe-auto-slider-widget .ssw-title {
+#sufe-auto-login-widget {
+  --neon: #7dffb2;
+  --neon-strong: #c0ffd7;
+  --neon-dim: #45d78c;
+  --panel: rgba(3, 20, 13, 0.84);
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 2147483647;
+  width: 304px;
+  box-sizing: border-box;
+  padding: 0;
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--neon);
+  background:
+    linear-gradient(145deg, rgba(3, 15, 11, 0.56), rgba(4, 23, 16, 0.46) 52%, rgba(2, 11, 8, 0.6));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.36),
+    0 18px 52px rgba(0, 0, 0, 0.46);
+  backdrop-filter: blur(24px) saturate(125%);
+  -webkit-backdrop-filter: blur(24px) saturate(125%);
+  font: 700 12px/1.7 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  letter-spacing: 0.02em;
+  text-align: left;
+  -webkit-font-smoothing: none;
+}
+
+#sufe-auto-login-widget * { box-sizing: border-box; font-family: inherit; }
+#sufe-auto-login-widget::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(125, 255, 178, 0.025) 0 1px, transparent 1px 4px);
+}
+
+#sufe-auto-login-widget .ssw-matrix {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.2;
+}
+
+#sufe-auto-login-widget .ssw-ascii {
+  position: absolute;
+  top: 24px;
+  right: -4px;
+  margin: 0;
+  white-space: pre;
+  font: 8px/1.25 "SufePixel", monospace;
+  letter-spacing: 0;
+  background: linear-gradient(100deg, var(--neon-strong), var(--neon-dim) 46%, transparent 92%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sufe-gradient 6s ease-in-out infinite alternate;
+}
+#sufe-auto-login-widget .ssw-wavechar {
+  display: inline-block;
+  min-width: 1ch;
+  text-align: center;
+  transition: opacity 80ms linear;
+}
+#sufe-auto-login-widget .ssw-matrix::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(125, 255, 178, 0.07) 0 1px, transparent 1px 3px);
+  mix-blend-mode: screen;
+  animation: sufe-crt-flicker 180ms steps(2, end) infinite;
+}
+#sufe-auto-login-widget .ssw-matrix::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.5) 100%);
+  animation: sufe-crt-flicker 260ms steps(2, end) infinite;
+}
+
+#sufe-auto-login-widget .ssw-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -24px;
+  height: 24px;
+  border-top: 1px solid rgba(125, 255, 178, 0.08);
+  border-bottom: 1px solid rgba(125, 255, 178, 0.16);
+  background: linear-gradient(180deg, transparent, rgba(125, 255, 178, 0.04) 25%, rgba(125, 255, 178, 0.2) 52%, rgba(125, 255, 178, 0.05) 78%, transparent);
+  box-shadow: 0 0 18px rgba(125, 255, 178, 0.12);
+  animation: sufe-scan 3.2s linear infinite, sufe-crt-flicker 200ms steps(2, end) infinite;
+}
+
+#sufe-auto-login-widget .ssw-title {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-weight: 600;
-  font-size: 13px;
-  color: #1c3f94;
-  margin-bottom: 6px;
+  padding: 12px 14px 8px;
+  color: var(--neon-strong);
+  font-size: 12px;
+  line-height: 1.4;
+  text-shadow: 0 0 12px rgba(125, 255, 178, 0.35);
 }
-
-#sufe-auto-slider-widget .ssw-close {
+#sufe-auto-login-widget .ssw-title::before { content: ">_"; margin-right: 8px; color: var(--neon-dim); }
+#sufe-auto-login-widget .ssw-tools { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+#sufe-auto-login-widget .ssw-link,
+#sufe-auto-login-widget .ssw-close {
   cursor: pointer;
-  color: #9aa3b2;
-  font-size: 15px;
-  line-height: 1;
-  padding: 0 2px;
+  color: var(--neon-dim);
+  font-size: 11px;
+  transition: color 120ms ease, text-shadow 120ms ease;
 }
-#sufe-auto-slider-widget .ssw-close:hover { color: #555; }
+#sufe-auto-login-widget .ssw-link:hover,
+#sufe-auto-login-widget .ssw-close:hover { color: var(--neon-strong); text-shadow: 0 0 10px var(--neon); }
+#sufe-auto-login-widget .ssw-close { padding: 0 2px; font-size: 15px; line-height: 1; }
 
-#sufe-auto-slider-widget .ssw-body { margin-bottom: 4px; }
-#sufe-auto-slider-widget .ssw-line { word-break: break-all; }
-
-#sufe-auto-slider-widget .ssw-log {
+#sufe-auto-login-widget .ssw-body,
+#sufe-auto-login-widget .ssw-log,
+#sufe-auto-login-widget .ssw-actions { position: relative; z-index: 1; }
+#sufe-auto-login-widget .ssw-body { padding: 0 14px; margin-bottom: 6px; }
+#sufe-auto-login-widget .ssw-line { word-break: break-word; }
+#sufe-auto-login-widget .ssw-log {
   display: flex;
   flex-direction: column;
-  max-height: 132px;
+  max-height: 126px;
   overflow-y: auto;
-  margin: 4px 0;
-  color: #6b7280;
-  font-size: 12px;
-  line-height: 1.5;
+  margin: 4px 14px;
+  color: rgba(125, 255, 178, 0.58);
+  font-size: 10px;
+  line-height: 1.55;
+  scrollbar-width: thin;
+  scrollbar-color: var(--neon-dim) transparent;
 }
-#sufe-auto-slider-widget .ssw-log:empty { display: none; }
-#sufe-auto-slider-widget .ssw-logline { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#sufe-auto-login-widget .ssw-log:empty { display: none; }
+#sufe-auto-login-widget .ssw-logline { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-#sufe-auto-slider-widget .ssw-actions {
+#sufe-auto-login-widget .ssw-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 7px;
+  padding: 2px 14px 13px;
 }
-
-#sufe-auto-slider-widget .ssw-btn {
+#sufe-auto-login-widget .ssw-btn {
   appearance: none;
-  border: 1px solid #cdd5e1;
-  background: #f5f7fb;
-  color: #333;
-  font: inherit;
-  font-size: 12px;
-  padding: 4px 12px;
-  border-radius: 6px;
+  border: 1px solid rgba(125, 255, 178, 0.28);
+  border-radius: 7px;
+  padding: 5px 11px;
+  color: var(--neon);
+  background: linear-gradient(135deg, rgba(69, 215, 140, 0.1), rgba(69, 215, 140, 0.025));
+  box-shadow: inset 0 0 12px rgba(125, 255, 178, 0.03);
+  font: 700 11px/1.5 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+#sufe-auto-login-widget .ssw-btn:hover {
+  border-color: rgba(125, 255, 178, 0.72);
+  box-shadow: 0 0 14px rgba(69, 215, 140, 0.16);
+}
+#sufe-auto-login-widget .ssw-btn:active { transform: translateY(1px); }
+#sufe-auto-login-widget .ssw-btn:disabled { opacity: 0.45; cursor: wait; }
+#sufe-auto-login-widget .ssw-btn-primary {
+  color: #02140b;
+  border-color: rgba(192, 255, 215, 0.8);
+  background: linear-gradient(135deg, rgba(192, 255, 215, 0.96), rgba(69, 215, 140, 0.86));
+  box-shadow: 0 0 18px rgba(69, 215, 140, 0.2);
+}
+#sufe-auto-login-widget .ssw-btn-primary:hover { box-shadow: 0 0 22px rgba(125, 255, 178, 0.34); }
+
+#sufe-auto-login-widget .ssw-settings {
+  position: relative;
+  z-index: 1;
+  display: none;
+  margin-top: 3px;
+  border-top: 1px solid rgba(125, 255, 178, 0.16);
+  background: linear-gradient(180deg, rgba(69, 215, 140, 0.055), transparent);
+}
+#sufe-auto-login-widget .ssw-settings.ssw-open { display: block; padding-top: 8px; }
+#sufe-auto-login-widget .ssw-settings .ssw-line { padding: 0 14px; color: var(--neon-dim); font-size: 10px; }
+#sufe-auto-login-widget .ssw-settings .ssw-cinput { width: calc(100% - 28px); margin-left: 14px; margin-right: 14px; }
+
+#sufe-auto-login-widget .ssw-cinput,
+#sufe-auto-login-widget .ssw-vinput {
+  width: 100%;
+  margin-top: 7px;
+  padding: 7px 9px;
+  color: var(--neon-strong);
+  caret-color: var(--neon);
+  background: rgba(0, 8, 5, 0.58);
+  border: 1px solid rgba(125, 255, 178, 0.24);
+  border-radius: 7px;
+  outline: none;
+  font: 700 12px/1.5 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+#sufe-auto-login-widget .ssw-cinput::placeholder,
+#sufe-auto-login-widget .ssw-vinput::placeholder { color: rgba(125, 255, 178, 0.36); }
+#sufe-auto-login-widget .ssw-cinput:focus,
+#sufe-auto-login-widget .ssw-vinput:focus {
+  border-color: var(--neon);
+  box-shadow: 0 0 0 2px rgba(69, 215, 140, 0.12), 0 0 16px rgba(69, 215, 140, 0.12);
+}
+#sufe-auto-login-widget .ssw-vbox { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 8px 0 4px; }
+#sufe-auto-login-widget .ssw-vimg {
+  width: 220px;
+  height: 94px;
+  background: rgba(0, 8, 5, 0.7);
+  border: 1px solid rgba(125, 255, 178, 0.25);
+  border-radius: 8px;
   cursor: pointer;
 }
-#sufe-auto-slider-widget .ssw-btn:hover { background: #e9eef7; }
+#sufe-auto-login-widget .ssw-vinput { width: 174px; letter-spacing: 7px; text-align: center; text-transform: uppercase; }
 
-#sufe-auto-slider-widget .ssw-btn-primary {
-  background: #1c3f94;
-  border-color: #1c3f94;
-  color: #fff;
+#sufe-auto-login-widget .ssw-countdown { padding: 8px 0 4px; text-align: center; }
+#sufe-auto-login-widget .ssw-count-kicker { color: var(--neon-dim); font-size: 9px; letter-spacing: 0.12em; }
+#sufe-auto-login-widget .ssw-count-num {
+  display: grid;
+  place-items: center;
+  min-height: 1.05em;
+  margin: 8px 0 4px;
+  color: var(--neon-strong);
+  font-size: 54px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 8px rgba(125, 255, 178, 0.85), 0 0 26px rgba(69, 215, 140, 0.55), 0 0 54px rgba(69, 215, 140, 0.28);
+  animation: sufe-pulse 1s steps(2, end) infinite;
 }
-#sufe-auto-slider-widget .ssw-btn-primary:hover { background: #16347a; }
+#sufe-auto-login-widget .ssw-count-num > span { grid-area: 1 / 1; }
+#sufe-auto-login-widget .ssw-digit-in { animation: sufe-digit-in 320ms cubic-bezier(0.2, 0.85, 0.25, 1) both; }
+#sufe-auto-login-widget .ssw-digit-out { animation: sufe-digit-out 280ms cubic-bezier(0.4, 0, 0.8, 0.2) both; }
+#sufe-auto-login-widget .ssw-count-label { color: var(--neon); font-size: 10px; }
+#sufe-auto-login-widget .ssw-progress { height: 3px; margin: 12px 0 8px; overflow: hidden; background: rgba(125, 255, 178, 0.1); }
+#sufe-auto-login-widget .ssw-progress > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--neon-dim), var(--neon-strong));
+  box-shadow: 0 0 12px var(--neon);
+  animation: sufe-progress-fill 2s linear forwards;
+}
+#sufe-auto-login-widget .ssw-preflight { color: rgba(125, 255, 178, 0.62); font-size: 10px; min-height: 18px; }
+#sufe-auto-login-widget .ssw-username { color: var(--neon-dim); font-size: 10px; margin-top: 3px; }
+
+#sufe-auto-login-widget .ssw-success { position: relative; padding: 12px 0 6px; text-align: center; }
+#sufe-auto-login-widget .ssw-success-kicker { color: var(--neon-dim); font-size: 9px; letter-spacing: 0.1em; }
+#sufe-auto-login-widget .ssw-success-title {
+  margin: 12px 0 8px;
+  color: var(--neon-strong);
+  font-size: 21px;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 10px rgba(125, 255, 178, 0.8), 0 0 30px rgba(69, 215, 140, 0.5);
+  animation: sufe-glitch 2.2s steps(1, end) infinite;
+}
+#sufe-auto-login-widget .ssw-success-sub { color: var(--neon); font-size: 11px; }
+#sufe-auto-login-widget .ssw-pixels { margin: 10px 0 2px; color: var(--neon-dim); letter-spacing: 0.24em; animation: sufe-blink 1.2s steps(2, end) infinite; }
+
+@keyframes sufe-progress-fill { from { width: 0; } to { width: 100%; } }
+@keyframes sufe-digit-in {
+  from { opacity: 0; transform: translateY(42%) scaleY(0.72); filter: brightness(2); }
+  to { opacity: 1; transform: translateY(0) scaleY(1); filter: brightness(1); }
+}
+@keyframes sufe-digit-out {
+  from { opacity: 1; transform: translateY(0) scaleY(1); }
+  to { opacity: 0; transform: translateY(-42%) scaleY(0.72); }
+}
+@keyframes sufe-crt-flicker { 0%, 100% { opacity: 0.86; } 50% { opacity: 0.72; } }
+@keyframes sufe-scan { from { transform: translateY(0); } to { transform: translateY(460px); } }
+@keyframes sufe-gradient { from { background-position: 0% 0%; opacity: 0.7; } to { background-position: 100% 100%; opacity: 1; } }
+@keyframes sufe-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.78; } }
+@keyframes sufe-blink { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+@keyframes sufe-glitch {
+  0%, 88%, 100% { transform: translate(0); text-shadow: 0 0 10px rgba(125, 255, 178, 0.8), 0 0 30px rgba(69, 215, 140, 0.5); }
+  90% { transform: translate(-1px, 0); text-shadow: 2px 0 0 rgba(69, 215, 140, 0.8), -2px 0 0 rgba(192, 255, 215, 0.45); }
+  92% { transform: translate(1px, 0); }
+  94% { transform: translate(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #sufe-auto-login-widget *, #sufe-auto-login-widget *::before, #sufe-auto-login-widget *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
