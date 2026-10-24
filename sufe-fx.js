@@ -116,13 +116,13 @@
         }
       }
 
-      // ── 2) 右下侧 SUFE 字符字样（无眩光、低明度、加粗；避开标题行） ──
+      // ── 2) 右下角 SUFE 字符字样（无眩光、低明度、加粗） ─────────────
       var cell = Math.max(6, Math.min(
         Math.floor(L.w * 0.62 / m.w),
         Math.floor(L.h * 0.42 / m.h)
       ));
       var ox = L.w - m.w * cell - Math.round(cell * 1.1);   // 右对齐
-      var oy = Math.max(46, Math.round(cell * 1.2));         // 标题行(~42px)之下
+      var oy = L.h - m.h * cell - Math.round(cell * 1.4);    // 贴底（留少量边距）
       var fontSize = Math.round(cell * 1.35);
       var lineWidth = Math.max(1.5, cell * 0.22);            // 描边加粗
       ctx.font = fontSize + 'px ' + fontStack;
