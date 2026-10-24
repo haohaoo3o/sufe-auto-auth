@@ -116,29 +116,24 @@
         }
       }
 
-      // ── 2) 右上角 SUFE 字符字样（低明度，加粗加大） ────────────────
+      // ── 2) 右下侧 SUFE 字符字样（无眩光、低明度、加粗；避开标题行） ──
       var cell = Math.max(6, Math.min(
         Math.floor(L.w * 0.62 / m.w),
         Math.floor(L.h * 0.42 / m.h)
       ));
-      var ox = L.w - m.w * cell - Math.round(cell * 1.1);   // 右上
-      var oy = Math.round(cell * 1.6);
-      var span = m.w + 10;
-      var beamX = ((t * 8) % span) - 5;                      // 缓慢左→右光带
-      var fontSize = Math.round(cell * 1.3);
-      var lineWidth = Math.max(1, cell * 0.14);              // 描边加粗
+      var ox = L.w - m.w * cell - Math.round(cell * 1.1);   // 右对齐
+      var oy = Math.max(46, Math.round(cell * 1.2));         // 标题行(~42px)之下
+      var fontSize = Math.round(cell * 1.35);
+      var lineWidth = Math.max(1.5, cell * 0.22);            // 描边加粗
       ctx.font = fontSize + 'px ' + fontStack;
       for (var i = 0; i < m.cells.length; i++) {
         var c = m.cells[i];
         var wave = Math.sin(c.x * 0.5 + t * 1.7)
                  + Math.sin(c.y * 0.9 - t * 1.1)
                  + Math.sin((c.x + c.y) * 0.32 + t * 0.7);
-        var v = (wave + 3) / 6;                              // 0..1
-        var d = c.x - beamX;
-        var beam = Math.exp(-(d * d) / 10);
-        var bri = Math.min(1, 0.2 + v * 0.5 + beam * 0.45);  // 峰值 ~0.75
-        var alpha = 0.16 + bri * 0.44;                       // 最高 ~0.6，装饰级
-        var col = lerp3(dim, mid, hot, bri);
+        var v = (wave + 3) / 6;                              // 0..1 缓慢起伏
+        var alpha = 0.1 + v * 0.26;                          // 0.10~0.36 低明度
+        var col = lerp3(dim, mid, mid, v);                   // 暗蓝→亮蓝，不进白热
         var paint = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + alpha.toFixed(3) + ')';
         var px = ox + c.x * cell + cell / 2;
         var py = oy + c.y * cell + cell / 2;
