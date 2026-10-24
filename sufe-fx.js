@@ -116,15 +116,18 @@
         }
       }
 
-      // ── 2) 右上角 SUFE 字符字样（低明度） ─────────────────
-      var cell = Math.max(5, Math.min(
-        Math.floor(L.w * 0.52 / m.w),
-        Math.floor(L.h * 0.34 / m.h)
+      // ── 2) 右上角 SUFE 字符字样（低明度，加粗加大） ────────────────
+      var cell = Math.max(6, Math.min(
+        Math.floor(L.w * 0.62 / m.w),
+        Math.floor(L.h * 0.42 / m.h)
       ));
-      var ox = L.w - m.w * cell - Math.round(cell * 1.4);   // 右上
-      var oy = Math.round(cell * 2.2);
+      var ox = L.w - m.w * cell - Math.round(cell * 1.1);   // 右上
+      var oy = Math.round(cell * 1.6);
       var span = m.w + 10;
       var beamX = ((t * 8) % span) - 5;                      // 缓慢左→右光带
+      var fontSize = Math.round(cell * 1.3);
+      var lineWidth = Math.max(1, cell * 0.14);              // 描边加粗
+      ctx.font = fontSize + 'px ' + fontStack;
       for (var i = 0; i < m.cells.length; i++) {
         var c = m.cells[i];
         var wave = Math.sin(c.x * 0.5 + t * 1.7)
@@ -133,12 +136,18 @@
         var v = (wave + 3) / 6;                              // 0..1
         var d = c.x - beamX;
         var beam = Math.exp(-(d * d) / 10);
-        var bri = Math.min(1, 0.2 + v * 0.5 + beam * 0.45);  // 峰值 ~0.75，整体偏暗
-        var alpha = 0.14 + bri * 0.38;                       // 最高 ~0.42 —— 装饰级明度
+        var bri = Math.min(1, 0.2 + v * 0.5 + beam * 0.45);  // 峰值 ~0.75
+        var alpha = 0.16 + bri * 0.44;                       // 最高 ~0.6，装饰级
         var col = lerp3(dim, mid, hot, bri);
-        ctx.font = Math.round(cell * 1.05) + 'px ' + fontStack;
-        ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + alpha.toFixed(3) + ')';
-        ctx.fillText(cellChar(9000 + i, t), ox + c.x * cell + cell / 2, oy + c.y * cell + cell / 2);
+        var paint = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + alpha.toFixed(3) + ')';
+        var px = ox + c.x * cell + cell / 2;
+        var py = oy + c.y * cell + cell / 2;
+        var ch = cellChar(9000 + i, t);
+        ctx.strokeStyle = paint;
+        ctx.lineWidth = lineWidth;
+        ctx.strokeText(ch, px, py);                          // 描边 → 加粗
+        ctx.fillStyle = paint;
+        ctx.fillText(ch, px, py);
       }
     }
 

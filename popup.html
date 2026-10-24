@@ -74,7 +74,7 @@
     text-shadow: 0 0 14px rgba(77, 141, 255, 0.4);
   }
   h3::before { content: ">_ "; color: #4d8dff; }
-  label { display: block; margin: 10px 0 4px; color: rgba(158, 197, 255, 0.78); font-size: 10px; }
+  label { display: block; margin: 10px 0 4px; color: rgba(190, 219, 255, 0.92); font-size: 10px; text-shadow: 0 0 8px rgba(121, 184, 255, 0.4); }
   input[type="text"], input[type="password"] {
     width: 100%;
     box-sizing: border-box;
@@ -104,13 +104,14 @@
     cursor: pointer;
   }
   .pwd-toggle:hover { color: #d0e6ff; background: transparent; }
-  .row { display: flex; align-items: flex-start; gap: 7px; margin: 13px 0 4px; color: rgba(158, 197, 255, 0.8); font-size: 10px; }
+  .row { display: flex; align-items: flex-start; gap: 7px; margin: 13px 0 4px; color: rgba(190, 219, 255, 0.92); font-size: 10px; text-shadow: 0 0 8px rgba(121, 184, 255, 0.4); }
   .row input { margin-top: 4px; accent-color: #4d8dff; }
   .row label { margin: 0; line-height: 1.6; }
   .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
   button {
     padding: 7px 4px;
-    color: #79b8ff;
+    color: #9ccbff;
+    text-shadow: 0 0 10px rgba(121, 184, 255, 0.35);
     background: linear-gradient(135deg, rgba(77, 141, 255, 0.16), rgba(77, 141, 255, 0.05));
     border: 1px solid rgba(121, 184, 255, 0.32);
     border-radius: 7px;
@@ -124,10 +125,10 @@
     background: linear-gradient(135deg, #d0e6ff, #4d8dff);
     box-shadow: 0 0 18px rgba(77, 141, 255, 0.24);
   }
-  #status { margin-top: 12px; color: #79b8ff; font-size: 10px; white-space: pre-wrap; word-break: break-word; }
+  #status { margin-top: 12px; color: #a9d1ff; font-size: 10px; white-space: pre-wrap; word-break: break-word; text-shadow: 0 0 9px rgba(121, 184, 255, 0.45); }
   #status.err { color: #ffd0d0; text-shadow: 0 0 10px rgba(255, 208, 208, 0.4); }
-  #stats { margin-top: 7px; color: rgba(158, 197, 255, 0.6); font-size: 9px; }
-  .tip { margin-top: 13px; color: rgba(158, 197, 255, 0.62); font-size: 9px; line-height: 1.65; }
+  #stats { margin-top: 7px; color: rgba(180, 212, 255, 0.8); font-size: 9px; text-shadow: 0 0 8px rgba(121, 184, 255, 0.35); }
+  .tip { margin-top: 13px; color: rgba(186, 217, 255, 0.85); font-size: 9px; line-height: 1.65; text-shadow: 0 0 8px rgba(121, 184, 255, 0.35); }
   @keyframes crt-flicker { 0%, 100% { opacity: 0.86; } 50% { opacity: 0.72; } }
   @keyframes scan { from { background-position: 0 -160%, 0 0; } to { background-position: 0 100%, 0 0; } }
   @media (prefers-reduced-motion: reduce) {

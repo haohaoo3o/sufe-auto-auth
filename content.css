@@ -14,9 +14,9 @@
 }
 
 #sufe-auto-login-widget {
-  --neon: #8cc1ff;
+  --neon: #9ccbff;
   --neon-strong: #d5e9ff;
-  --neon-dim: #5b97ff;
+  --neon-dim: #7fb4ff;
   --gold: #d8c08a;
   --panel: rgba(50, 44, 31, 0.6);
   position: fixed;
@@ -114,8 +114,9 @@
 #sufe-auto-login-widget .ssw-link,
 #sufe-auto-login-widget .ssw-close {
   cursor: pointer;
-  color: var(--neon-dim);
+  color: #a5cdff;
   font-size: 11px;
+  text-shadow: 0 0 8px rgba(121, 184, 255, 0.45);
   transition: color 120ms ease, text-shadow 120ms ease;
 }
 #sufe-auto-login-widget .ssw-link:hover,
@@ -126,14 +127,15 @@
 #sufe-auto-login-widget .ssw-log,
 #sufe-auto-login-widget .ssw-actions { position: relative; z-index: 1; }
 #sufe-auto-login-widget .ssw-body { padding: 0 14px; margin-bottom: 6px; }
-#sufe-auto-login-widget .ssw-line { word-break: break-word; }
+#sufe-auto-login-widget .ssw-line { word-break: break-word; color: #a9d1ff; text-shadow: 0 0 9px rgba(121, 184, 255, 0.45), 0 0 20px rgba(77, 141, 255, 0.25); }
 #sufe-auto-login-widget .ssw-log {
   display: flex;
   flex-direction: column;
   max-height: 126px;
   overflow-y: auto;
   margin: 4px 14px;
-  color: rgba(176, 213, 255, 0.85);
+  color: rgba(196, 224, 255, 0.95);
+  text-shadow: 0 0 8px rgba(121, 184, 255, 0.4);
   font-size: 10px;
   line-height: 1.55;
   scrollbar-width: thin;
@@ -164,6 +166,7 @@
   border-color: rgba(121, 184, 255, 0.78);
   box-shadow: 0 0 14px rgba(77, 141, 255, 0.2);
 }
+#sufe-auto-login-widget .ssw-btn { text-shadow: 0 0 10px rgba(121, 184, 255, 0.35); }
 #sufe-auto-login-widget .ssw-btn:active { transform: translateY(1px); }
 #sufe-auto-login-widget .ssw-btn:disabled { opacity: 0.45; cursor: wait; }
 #sufe-auto-login-widget .ssw-btn-primary {
@@ -183,7 +186,7 @@
   background: linear-gradient(180deg, rgba(216, 192, 138, 0.06), transparent);
 }
 #sufe-auto-login-widget .ssw-settings.ssw-open { display: block; padding-top: 8px; }
-#sufe-auto-login-widget .ssw-settings .ssw-line { padding: 0 14px; color: var(--neon-dim); font-size: 10px; }
+#sufe-auto-login-widget .ssw-settings .ssw-line { padding: 0 14px; color: #a5cdff !important; font-size: 10px; text-shadow: 0 0 8px rgba(121, 184, 255, 0.45); }
 #sufe-auto-login-widget .ssw-settings .ssw-cinput { width: calc(100% - 28px); margin-left: 14px; margin-right: 14px; }
 
 #sufe-auto-login-widget .ssw-cinput,
@@ -201,7 +204,7 @@
   transition: border-color 120ms ease, box-shadow 120ms ease;
 }
 #sufe-auto-login-widget .ssw-cinput::placeholder,
-#sufe-auto-login-widget .ssw-vinput::placeholder { color: rgba(121, 184, 255, 0.4); }
+#sufe-auto-login-widget .ssw-vinput::placeholder { color: rgba(165, 205, 255, 0.55); }
 #sufe-auto-login-widget .ssw-cinput:focus,
 #sufe-auto-login-widget .ssw-vinput:focus {
   border-color: var(--neon);
@@ -220,7 +223,7 @@
 
 /* ── 倒计时 ── */
 #sufe-auto-login-widget .ssw-countdown { padding: 8px 0 4px; text-align: center; }
-#sufe-auto-login-widget .ssw-count-kicker { color: var(--neon-dim); font-size: 9px; letter-spacing: 0.12em; }
+#sufe-auto-login-widget .ssw-count-kicker { color: #a5cdff; font-size: 9px; letter-spacing: 0.12em; text-shadow: 0 0 10px rgba(121, 184, 255, 0.55), 0 0 22px rgba(77, 141, 255, 0.3); }
 #sufe-auto-login-widget .ssw-count-num {
   display: grid;
   place-items: center;
@@ -236,7 +239,7 @@
 #sufe-auto-login-widget .ssw-count-num > span { grid-area: 1 / 1; }
 #sufe-auto-login-widget .ssw-digit-in { animation: sufe-digit-in 320ms cubic-bezier(0.2, 0.85, 0.25, 1) both; }
 #sufe-auto-login-widget .ssw-digit-out { animation: sufe-digit-out 280ms cubic-bezier(0.4, 0, 0.8, 0.2) both; }
-#sufe-auto-login-widget .ssw-count-label { color: var(--neon); font-size: 10px; }
+#sufe-auto-login-widget .ssw-count-label { color: #a9d1ff; font-size: 10px; text-shadow: 0 0 9px rgba(121, 184, 255, 0.5), 0 0 20px rgba(77, 141, 255, 0.28); }
 #sufe-auto-login-widget .ssw-progress { height: 3px; margin: 12px 0 8px; overflow: hidden; background: rgba(121, 184, 255, 0.12); }
 #sufe-auto-login-widget .ssw-progress > span {
   display: block;
@@ -245,7 +248,7 @@
   box-shadow: 0 0 12px var(--neon);
   animation: sufe-progress-fill 3s linear forwards;
 }
-#sufe-auto-login-widget .ssw-username { color: var(--neon-dim); font-size: 10px; margin-top: 3px; }
+#sufe-auto-login-widget .ssw-username { color: #a5cdff; font-size: 10px; margin-top: 3px; text-shadow: 0 0 8px rgba(121, 184, 255, 0.45); }
 
 /* ── 验证码重试页（像素大数字，同款切换特效） ── */
 #sufe-auto-login-widget .ssw-retry { padding: 8px 0 4px; text-align: center; }
@@ -265,9 +268,10 @@
   animation: sufe-pulse 0.8s steps(2, end) infinite;
 }
 #sufe-auto-login-widget .ssw-retry-max {
-  color: var(--neon-dim);
+  color: #a5cdff;
   font-size: 15px;
   letter-spacing: 0.06em;
+  text-shadow: 0 0 9px rgba(121, 184, 255, 0.5);
 }
 #sufe-auto-login-widget .ssw-retry-bar { margin: 10px 0 6px; background: rgba(121, 184, 255, 0.12); }
 #sufe-auto-login-widget .ssw-retry-bar > span {
@@ -276,7 +280,7 @@
 }
 
 #sufe-auto-login-widget .ssw-success { position: relative; padding: 12px 0 6px; text-align: center; }
-#sufe-auto-login-widget .ssw-success-kicker { color: var(--neon-dim); font-size: 9px; letter-spacing: 0.1em; }
+#sufe-auto-login-widget .ssw-success-kicker { color: #a5cdff; font-size: 9px; letter-spacing: 0.1em; text-shadow: 0 0 10px rgba(121, 184, 255, 0.55); }
 #sufe-auto-login-widget .ssw-success-title {
   margin: 12px 0 14px;
   color: var(--neon-strong);
@@ -286,7 +290,7 @@
   text-shadow: 0 0 10px rgba(121, 184, 255, 0.85), 0 0 30px rgba(77, 141, 255, 0.55);
   animation: sufe-glitch 2.2s steps(1, end) infinite;
 }
-#sufe-auto-login-widget .ssw-success-sub { color: var(--neon); font-size: 11px; }
+#sufe-auto-login-widget .ssw-success-sub { color: #a9d1ff; font-size: 11px; text-shadow: 0 0 9px rgba(121, 184, 255, 0.5); }
 #sufe-auto-login-widget .ssw-pixels { margin: 10px 0 2px; color: var(--neon-dim); letter-spacing: 0.24em; animation: sufe-blink 1.2s steps(2, end) infinite; }
 
 @keyframes sufe-progress-fill { from { width: 0; } to { width: 100%; } }
