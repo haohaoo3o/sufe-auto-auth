@@ -295,10 +295,6 @@
         catch (e) { ui.note('第 ' + t + ' 次识别异常：' + e.message); }
       }
       if (t === 1) ui.status('识别字符验证码…');
-      if (pred) {
-        ui.note('识别：' + (pred.text || '空') + '（置信度 ' +
-          Math.round((pred.minProb || 0) * 100) + '%，' + pred.ms + 'ms）');
-      }
       const confident = pred && pred.text && pred.text.length === 4 && pred.minProb >= VCODE_CONF_MIN;
       if (!confident) {
         ui.note('第 ' + t + '/' + VCODE_MAX_AUTO_TRIES + ' 次置信度不足，换图立即重试');
@@ -501,45 +497,15 @@
 
   let preflight = null;
 
-  function updatePreflight() {
-    if (!root || state !== 'pending' || !preflight) return;
-    const line = root.querySelector('.ssw-preflight');
-    if (!line) return;
-    const p = preflight.progress;
-    const parts = [];
-    if (p.config) parts.push('配置');
-    if (p.image) parts.push('图片');
-    if (p.infer) parts.push('识别');
-    if (parts.length === 3) {
-      const pred = preflight.pred;
-      line.textContent = (pred && pred.text && pred.text.length === 4)
-        ? '预识别就绪：' + pred.text + ' · 置信 ' + Math.round((pred.minProb || 0) * 100) + '%，倒计时结束即登录'
-        : '预破解就绪，倒计时结束即登录';
-    } else {
-      line.textContent = '后台预识别：' + (parts.join(' / ') || '启动中');
-    }
-  }
-
   function startPreflight(cfg) {
-    const progress = { config: false, image: false, infer: false };
     const imgP = fetchVcodeImage().catch(() => null);
     const inferP = imgP.then((img) => {
-      progress.image = true;
-      updatePreflight();
       if (!img) return null;
       return inferWithRetry(img).catch(() => null);
-    }).then((pred) => {
-      progress.infer = true;
-      if (preflight) preflight.pred = pred;
-      updatePreflight();
-      return pred;
     });
-    const loginCfgP = getLoginConfig().then((v) => {
-      progress.config = true; updatePreflight(); return { value: v };
-    }, (error) => ({ error }));
+    const loginCfgP = getLoginConfig().then((v) => ({ value: v }), (error) => ({ error }));
     const userValidP = queryUserValid(cfg.username).then((v) => ({ value: v }), (error) => ({ error }));
-    preflight = { progress, imgP, inferP, loginCfgP, userValidP, at: Date.now() };
-    updatePreflight();
+    preflight = { imgP, inferP, loginCfgP, userValidP, at: Date.now() };
   }
 
   async function autoLogin(cfg, ui, runId, prepared) {
@@ -853,7 +819,6 @@
     const existing = bodyEl.querySelector('.ssw-countdown');
     if (existing) {
       setCountDigit(existing.querySelector('.ssw-count-num'), remain);
-      updatePreflight();
       return;
     }
     bodyEl.textContent = '';
@@ -868,14 +833,12 @@
     const progress = el('div', 'ssw-progress');
     progress.appendChild(el('span'));
     box.appendChild(progress);
-    box.appendChild(el('div', 'ssw-preflight', '后台预破解：启动中'));
     box.appendChild(el('div', 'ssw-username', cfg.username));
     bodyEl.appendChild(box);
     actionsEl.append(
       mkBtn('立即登录', () => startFlow(), true),
       mkBtn('取消', () => { stopRun(); renderManual(); })
     );
-    updatePreflight();
   }
 
   async function startCountdown(cfg) {
