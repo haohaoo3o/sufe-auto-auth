@@ -17,7 +17,8 @@
   --neon: #79b8ff;
   --neon-strong: #d0e6ff;
   --neon-dim: #4d8dff;
-  --panel: rgba(4, 14, 30, 0.86);
+  --gold: #d8c08a;
+  --panel: rgba(41, 36, 26, 0.78);
   position: fixed;
   top: 16px;
   right: 16px;
@@ -29,8 +30,8 @@
   isolation: isolate;
   color: var(--neon);
   background:
-    linear-gradient(145deg, rgba(6, 15, 32, 0.6), rgba(8, 20, 42, 0.5) 52%, rgba(3, 9, 20, 0.64));
-  border: 1px solid rgba(255, 255, 255, 0.14);
+    linear-gradient(145deg, rgba(52, 46, 33, 0.8), rgba(41, 36, 26, 0.7) 52%, rgba(30, 26, 18, 0.8));
+  border: 1px solid rgba(216, 192, 138, 0.2);
   border-radius: 14px;
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.38),
@@ -178,8 +179,8 @@
   z-index: 1;
   display: none;
   margin-top: 3px;
-  border-top: 1px solid rgba(121, 184, 255, 0.18);
-  background: linear-gradient(180deg, rgba(77, 141, 255, 0.07), transparent);
+  border-top: 1px solid rgba(216, 192, 138, 0.22);
+  background: linear-gradient(180deg, rgba(216, 192, 138, 0.06), transparent);
 }
 #sufe-auto-login-widget .ssw-settings.ssw-open { display: block; padding-top: 8px; }
 #sufe-auto-login-widget .ssw-settings .ssw-line { padding: 0 14px; color: var(--neon-dim); font-size: 10px; }
@@ -192,7 +193,7 @@
   padding: 7px 9px;
   color: var(--neon-strong);
   caret-color: var(--neon);
-  background: rgba(2, 8, 20, 0.62);
+  background: rgba(24, 20, 14, 0.62);
   border: 1px solid rgba(121, 184, 255, 0.28);
   border-radius: 7px;
   outline: none;
@@ -210,7 +211,7 @@
 #sufe-auto-login-widget .ssw-vimg {
   width: 220px;
   height: 94px;
-  background: rgba(2, 8, 20, 0.72);
+  background: rgba(24, 20, 14, 0.72);
   border: 1px solid rgba(121, 184, 255, 0.28);
   border-radius: 8px;
   cursor: pointer;
