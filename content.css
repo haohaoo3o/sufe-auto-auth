@@ -14,11 +14,11 @@
 }
 
 #sufe-auto-login-widget {
-  --neon: #79b8ff;
-  --neon-strong: #d0e6ff;
-  --neon-dim: #4d8dff;
+  --neon: #8cc1ff;
+  --neon-strong: #d5e9ff;
+  --neon-dim: #5b97ff;
   --gold: #d8c08a;
-  --panel: rgba(41, 36, 26, 0.78);
+  --panel: rgba(50, 44, 31, 0.6);
   position: fixed;
   top: 16px;
   right: 16px;
@@ -30,14 +30,14 @@
   isolation: isolate;
   color: var(--neon);
   background:
-    linear-gradient(145deg, rgba(52, 46, 33, 0.8), rgba(41, 36, 26, 0.7) 52%, rgba(30, 26, 18, 0.8));
+    linear-gradient(145deg, rgba(62, 55, 38, 0.64), rgba(50, 44, 31, 0.52) 52%, rgba(38, 33, 23, 0.64));
   border: 1px solid rgba(216, 192, 138, 0.2);
   border-radius: 14px;
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.38),
     0 18px 52px rgba(0, 0, 0, 0.48);
-  backdrop-filter: blur(24px) saturate(125%);
-  -webkit-backdrop-filter: blur(24px) saturate(125%);
+  backdrop-filter: blur(28px) saturate(125%);
+  -webkit-backdrop-filter: blur(28px) saturate(125%);
   font: 700 12px/1.7 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   letter-spacing: 0.02em;
   text-align: left;
@@ -133,7 +133,7 @@
   max-height: 126px;
   overflow-y: auto;
   margin: 4px 14px;
-  color: rgba(158, 197, 255, 0.72);
+  color: rgba(176, 213, 255, 0.85);
   font-size: 10px;
   line-height: 1.55;
   scrollbar-width: thin;

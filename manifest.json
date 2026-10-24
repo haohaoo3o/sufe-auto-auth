@@ -8,7 +8,8 @@
     "scripting"
   ],
   "host_permissions": [
-    "https://login.sufe.edu.cn/*"
+    "https://login.sufe.edu.cn/*",
+    "https://login-sufe-edu-cn-s.webvpn.sufe.edu.cn/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -30,13 +31,17 @@
   "web_accessible_resources": [
     {
       "resources": ["fonts/*"],
-      "matches": ["https://login.sufe.edu.cn/*"]
+      "matches": [
+        "https://login.sufe.edu.cn/*",
+        "https://login-sufe-edu-cn-s.webvpn.sufe.edu.cn/*"
+      ]
     }
   ],
   "content_scripts": [
     {
       "matches": [
-        "https://login.sufe.edu.cn/*"
+        "https://login.sufe.edu.cn/*",
+        "https://login-sufe-edu-cn-s.webvpn.sufe.edu.cn/*"
       ],
       "js": [
         "sufe-crypto.js",

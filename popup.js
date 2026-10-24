@@ -1,5 +1,8 @@
 const CFG_KEY = 'sufeAutoLoginCfg';
-const LOGIN_URL_PREFIX = 'https://login.sufe.edu.cn/';
+const LOGIN_URL_PREFIXES = [
+  'https://login.sufe.edu.cn/',
+  'https://login-sufe-edu-cn-s.webvpn.sufe.edu.cn/',
+];
 
 const $username = document.getElementById('username');
 const $password = document.getElementById('password');
@@ -67,7 +70,7 @@ $save.addEventListener('click', async () => {
 
 async function activeLoginTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab || !tab.url || !tab.url.startsWith(LOGIN_URL_PREFIX)) return null;
+  if (!tab || !tab.url || !LOGIN_URL_PREFIXES.some((p) => tab.url.startsWith(p))) return null;
   return tab;
 }
 
@@ -106,7 +109,7 @@ async function sendTest(tab, msgType) {
 $login.addEventListener('click', async () => {
   const tab = await activeLoginTab();
   if (!tab) {
-    setStatus('请先在当前标签页打开上财登录页（login.sufe.edu.cn），再点「登录」。', true);
+    setStatus('请先在当前标签页打开上财登录页（login.sufe.edu.cn 或 WebVPN 镜像 login-sufe-edu-cn-s.webvpn.sufe.edu.cn），再点「登录」。', true);
     return;
   }
   setStatus('正在登录…（结果见页面右上角浮窗）');
@@ -126,7 +129,7 @@ $login.addEventListener('click', async () => {
 $test.addEventListener('click', async () => {
   const tab = await activeLoginTab();
   if (!tab) {
-    setStatus('请先打开上财登录页（login.sufe.edu.cn）标签页，再点击测试。', true);
+    setStatus('请先打开上财登录页（login.sufe.edu.cn 或其 WebVPN 镜像）标签页，再点击测试。', true);
     return;
   }
   setStatus('滑块测试中（最多 3 轮）…');
@@ -145,7 +148,7 @@ $test.addEventListener('click', async () => {
 $testVcode.addEventListener('click', async () => {
   const tab = await activeLoginTab();
   if (!tab) {
-    setStatus('请先打开上财登录页（login.sufe.edu.cn）标签页，再点击测试。', true);
+    setStatus('请先打开上财登录页（login.sufe.edu.cn 或其 WebVPN 镜像）标签页，再点击测试。', true);
     return;
   }
   setStatus('验证码识别测试中（5 张，不登录）…');

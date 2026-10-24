@@ -13,7 +13,10 @@
   window.__SUFE_AUTO_LOGIN__ = true;
 
   // ── 常量 ────────────────────────────────────────────────────────────
-  const BASE = 'https://login.sufe.edu.cn/esc-sso';
+  // WebVPN 镜像（login-sufe-edu-cn-s.webvpn.sufe.edu.cn）下 API 走当前源，
+  // cookie 也在该源上；直连站点固定用 login.sufe.edu.cn。
+  const IS_WEBVPN = /\.webvpn\.sufe\.edu\.cn$/.test(location.hostname);
+  const BASE = (IS_WEBVPN ? location.origin : 'https://login.sufe.edu.cn') + '/esc-sso';
   const MAX_ROUNDS = 6;            // 整体登录尝试轮数（配置刷新级别）
   const SLIDER_ROUNDS = 6;         // 单次滑块内候选校验轮数上限
   const VCODE_CONF_MIN = 0.35;     // 自动提交的最低单字符置信度（低于则换图重试）
