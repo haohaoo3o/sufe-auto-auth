@@ -1,7 +1,8 @@
 /*
- * 上财自动登录 · 内容脚本
- * 检测到上财统一认证登录页后：倒计时 → 查询验证类型（字符验证码 / 滑块 / 无）
- *   → 字符验证码：拉图 → 后台 CRNN 离线识别 → 登录（低置信度时浮窗人工输入）
+ * 上财自动认证 · 内容脚本
+ * 检测到上财统一认证登录页后：倒计时（后台并行预拉图 + 预识别 + 预取配置，倒计时结束即登录）
+ *   → 查询验证类型（字符验证码 / 滑块 / 无）
+ *   → 字符验证码：拉图 → 后台 CRNN 离线识别 → 登录；识别未通过立即换图重试（上限 10 次，无等待），仍失败转人工
  *   → 滑块：CNN 缺口定位 + 邻域梯队 → 登录
  *   → 无验证码：直接登录
  * 仅向 login.sufe.edu.cn 提交数据，密码 RSA(PKCS#1 v1.5) 加密后传输。
@@ -13,11 +14,11 @@
 
   // ── 常量 ────────────────────────────────────────────────────────────
   const BASE = 'https://login.sufe.edu.cn/esc-sso';
-  const MAX_ROUNDS = 6;            // 整体登录尝试轮数
+  const MAX_ROUNDS = 6;            // 整体登录尝试轮数（配置刷新级别）
   const SLIDER_ROUNDS = 6;         // 单次滑块内候选校验轮数上限
-  const VCODE_CONF_MIN = 0.35;     // 自动提交的最低单字符置信度（低于则人工输入）
-  const VCODE_FORCE_MANUAL = 2;    // 自动识别连续失败次数达到后强制人工
-  const AUTO_DELAY_MS = 2000;
+  const VCODE_CONF_MIN = 0.35;     // 自动提交的最低单字符置信度（低于则换图重试）
+  const VCODE_MAX_AUTO_TRIES = 10; // 验证码自动识别重试上限（无间隔连试，超过转人工）
+  const AUTO_DELAY_MS = 3000;
   const LOOP_GUARD_MS = 20000;
   const CFG_KEY = 'sufeAutoLoginCfg';
   const STATE_KEY = 'sufeAutoLoginState';
@@ -247,33 +248,109 @@
     return res;
   }
 
-  async function vcodeTry(ui, imgPromise, predPromise) {
-    let img = imgPromise ? await imgPromise.catch(() => null) : null;
-    if (!img) img = await fetchVcodeImage();
-    ui.status('识别字符验证码…');
-    let pred = predPromise ? await predPromise.catch(() => null) : null;
-    if (!pred) {
-      try { pred = await inferVcode(img); }
-      catch (e) { ui.note(e.message); }
-    }
-    if (pred) {
-      const pct = Math.round((pred.minProb || 0) * 100);
-      ui.note('识别：' + (pred.text || '空') + '（置信度 ' + pct + '%，' + pred.ms + 'ms）');
-      if (pred.text && pred.text.length === 4 && pred.minProb >= VCODE_CONF_MIN &&
-          vcodeAutoFails < VCODE_FORCE_MANUAL) {
-        return { code: pred.text, auto: true };
-      }
-      if (vcodeAutoFails >= VCODE_FORCE_MANUAL) ui.note('自动识别连续未通过，转人工输入');
-      else ui.note('识别不确定，请人工输入');
-    } else {
-      ui.note('识别不可用，请人工输入');
-    }
-    await recordVcodeStat(false, pred ? pred.minProb : null, pred ? pred.text : '', pred ? pred.ms : null);
-    const code = await askVcodeManually(img, pred);
-    return { code: code, auto: false };
+  function credentialError(res) {
+    if (!isCredentialError(res)) return null;
+    const err = new Error(res.code === 'SSO10001'
+      ? '学号不存在（SSO10001），请在扩展设置中更正'
+      : '学号或密码错误（SSO10002），请在扩展设置中更正');
+    err.stopRetry = true;
+    return err;
   }
 
-  let vcodeAutoFails = 0;
+  async function inferWithRetry(img) {
+    let lastErr = null;
+    for (let i = 0; i < 2; i++) {
+      try { return await inferVcode(img); }
+      catch (e) { lastErr = e; }
+    }
+    throw lastErr;
+  }
+
+  /*
+   * 字符验证码主流程：自动识别 → 提交；未通过立即换图重试（无等待），
+   * 连试 VCODE_MAX_AUTO_TRIES 次仍未通过才转人工输入。
+   * submit(code) 用当前 loginCfg 执行 doLogin；返回 code==='0' 的响应，
+   * 或 { refresh: true }（登录配置类错误，需外层刷新后重来）。
+   */
+  async function vcodeFlow(ui, checkStop, imgPromise, predPromise, submit) {
+    let img = null, pred = null;
+    let res = null;
+    let needRefresh = false;
+
+    for (let t = 1; t <= VCODE_MAX_AUTO_TRIES; t++) {
+      checkStop();
+      if (t > 1) renderVcodeRetry(t, VCODE_MAX_AUTO_TRIES);
+      img = (t === 1 && imgPromise) ? await imgPromise.catch(() => null) : null;
+      if (!img) {
+        try { img = await fetchVcodeImage(); }
+        catch (e) {
+          ui.note('第 ' + t + ' 次取图失败：' + e.message);
+          await recordVcodeStat(false, null, '', null);
+          continue;
+        }
+      }
+      pred = (t === 1 && predPromise) ? await predPromise.catch(() => null) : null;
+      if (!pred) {
+        try { pred = await inferWithRetry(img); }
+        catch (e) { ui.note('第 ' + t + ' 次识别异常：' + e.message); }
+      }
+      if (t === 1) ui.status('识别字符验证码…');
+      if (pred) {
+        ui.note('识别：' + (pred.text || '空') + '（置信度 ' +
+          Math.round((pred.minProb || 0) * 100) + '%，' + pred.ms + 'ms）');
+      }
+      const confident = pred && pred.text && pred.text.length === 4 && pred.minProb >= VCODE_CONF_MIN;
+      if (!confident) {
+        ui.note('第 ' + t + '/' + VCODE_MAX_AUTO_TRIES + ' 次置信度不足，换图立即重试');
+        await recordVcodeStat(false, pred ? pred.minProb : null, pred ? pred.text : '', pred ? pred.ms : null);
+        continue;
+      }
+      ui.status('正在登录…');
+      res = await submit(pred.text);
+      checkStop();
+      if (String(res.code) === '0') {
+        await recordVcodeStat(true, pred.minProb, pred.text, pred.ms);
+        return res;
+      }
+      const ce = credentialError(res);
+      if (ce) throw ce;
+      if (isVcodeError(res)) {
+        await recordVcodeStat(false, pred.minProb, pred.text, pred.ms);
+        ui.note('第 ' + t + '/' + VCODE_MAX_AUTO_TRIES + ' 次识别未通过，立即重试');
+        continue;
+      }
+      ui.note('doLogin 未通过：code=' + (res.code || '?') + ' msg=' + (res.msg || ''));
+      needRefresh = true;
+      break;
+    }
+
+    if (!needRefresh) {
+      ui.status('自动识别 ' + VCODE_MAX_AUTO_TRIES + ' 次未通过，请人工输入');
+      for (let m = 0; m < MAX_ROUNDS; m++) {
+        checkStop();
+        if (!img) {
+          try { img = await fetchVcodeImage(); }
+          catch (e) { ui.note('取图失败：' + e.message); continue; }
+        }
+        const code = await askVcodeManually(img, pred);
+        checkStop();
+        ui.status('正在登录…');
+        res = await submit(code);
+        if (String(res.code) === '0') return res;
+        const ce = credentialError(res);
+        if (ce) throw ce;
+        if (isVcodeError(res)) {
+          ui.note('输入的验证码有误，已换新图请重输');
+          img = null; pred = null;
+          continue;
+        }
+        ui.note('doLogin 未通过：code=' + (res.code || '?') + ' msg=' + (res.msg || ''));
+        needRefresh = true;
+        break;
+      }
+    }
+    return { refresh: true, res: res };
+  }
 
   // ── 人工输入浮窗 ────────────────────────────────────────────────────
   let manualReject = null;
@@ -433,7 +510,14 @@
     if (p.config) parts.push('配置');
     if (p.image) parts.push('图片');
     if (p.infer) parts.push('识别');
-    line.textContent = parts.length === 3 ? '预破解就绪，等待进入' : '后台预破解：' + (parts.join(' / ') || '启动中');
+    if (parts.length === 3) {
+      const pred = preflight.pred;
+      line.textContent = (pred && pred.text && pred.text.length === 4)
+        ? '预识别就绪：' + pred.text + ' · 置信 ' + Math.round((pred.minProb || 0) * 100) + '%，倒计时结束即登录'
+        : '预破解就绪，倒计时结束即登录';
+    } else {
+      line.textContent = '后台预识别：' + (parts.join(' / ') || '启动中');
+    }
   }
 
   function startPreflight(cfg) {
@@ -442,8 +526,14 @@
     const inferP = imgP.then((img) => {
       progress.image = true;
       updatePreflight();
-      return img ? inferVcode(img).catch(() => null) : null;
-    }).then((pred) => { progress.infer = true; updatePreflight(); return pred; });
+      if (!img) return null;
+      return inferWithRetry(img).catch(() => null);
+    }).then((pred) => {
+      progress.infer = true;
+      if (preflight) preflight.pred = pred;
+      updatePreflight();
+      return pred;
+    });
     const loginCfgP = getLoginConfig().then((v) => {
       progress.config = true; updatePreflight(); return { value: v };
     }, (error) => ({ error }));
@@ -454,7 +544,6 @@
 
   async function autoLogin(cfg, ui, runId, prepared) {
     const checkStop = () => { if (runId !== currentRunId) throw new Error('已停止'); };
-    vcodeAutoFails = 0;
 
     for (let attempt = 1; attempt <= MAX_ROUNDS; attempt++) {
       checkStop();
@@ -475,39 +564,35 @@
       }
       checkStop();
       const encPw = SufeCrypto.encryptPassword(cfg.password, loginCfg.param.publicKey);
-
-      let vcode = '';
-      let vcodeAuto = false;
+      const submit = (code) => doLogin(cfg, loginCfg, encPw, code);
       const type = uv.type;
-      if (type === 'slidercaptcha') {
-        vcode = await sliderFlow(ui);
-      } else if (type === 'vcode') {
-        const r = await vcodeTry(ui, imgP, predP);
-        vcode = r.code;
-        vcodeAuto = r.auto;
-      } else if (type) {
-        throw new Error('服务端要求的验证类型暂不支持：' + type);
-      }
 
-      checkStop();
-      ui.status('正在登录…');
-      const res = await doLogin(cfg, loginCfg, encPw, vcode);
-      checkStop();
-      if (String(res.code) === '0') {
-        vcodeAutoFails = 0;
-        await chrome.storage.local.set({ [STATE_KEY]: { lastAutoLoginAt: Date.now() } });
-        return res;
+      if (type === 'vcode') {
+        const res = await vcodeFlow(ui, checkStop, imgP, predP, submit);
+        if (String(res.code) === '0') {
+          await chrome.storage.local.set({ [STATE_KEY]: { lastAutoLoginAt: Date.now() } });
+          return res;
+        }
+      } else {
+        let vcode = '';
+        if (type === 'slidercaptcha') {
+          vcode = await sliderFlow(ui);
+        } else if (type) {
+          throw new Error('服务端要求的验证类型暂不支持：' + type);
+        }
+        checkStop();
+        ui.status('正在登录…');
+        const res = await submit(vcode);
+        checkStop();
+        if (String(res.code) === '0') {
+          await chrome.storage.local.set({ [STATE_KEY]: { lastAutoLoginAt: Date.now() } });
+          return res;
+        }
+        const ce = credentialError(res);
+        if (ce) throw ce;
+        ui.note('doLogin 未通过：code=' + (res.code || '?') + ' msg=' + (res.msg || ''));
       }
-      if (isCredentialError(res)) {
-        const err = new Error(res.code === 'SSO10001'
-          ? '学号不存在（SSO10001），请在扩展设置中更正'
-          : '学号或密码错误（SSO10002），请在扩展设置中更正');
-        err.stopRetry = true;
-        throw err;
-      }
-      if (type === 'vcode' && vcodeAuto && isVcodeError(res)) vcodeAutoFails++;
-      ui.note('doLogin 未通过：code=' + (res.code || '?') + ' msg=' + (res.msg || ''));
-      await sleep(500);
+      await sleep(300);
     }
     throw new Error('连续 ' + MAX_ROUNDS + ' 轮未通过——请稍后再试或手动登录');
   }
@@ -515,70 +600,35 @@
   // ── 浮窗 ────────────────────────────────────────────────────────────
   const WIDGET_ID = 'sufe-auto-login-widget';
   let root = null, bodyEl = null, logEl = null, actionsEl = null, settingsEl = null;
-  let matrixTimer = null;
   const logLines = [];
 
-  function sufeAscii() {
-    const glyphs = [
-      ['01110', '11000', '10000', '01110', '00011', '00011', '11110'],
-      ['10001', '10001', '10001', '10001', '10001', '10001', '01110'],
-      ['11111', '10000', '10000', '11110', '10000', '10000', '10000'],
-      ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
+  // 内容脚本 CSS 里的相对 url() 字体在页面上下文解析不到扩展资源（这是此前
+  // 像素字体不生效的根因），必须用 FontFace + chrome.runtime.getURL 注入；
+  // fonts/* 已在 manifest 的 web_accessible_resources 中。
+  const fontLoadTask = (function () {
+    const fonts = [
+      ['SufePixel', 'fonts/press-start-2p.ttf', {}],
+      ['SufeHei', 'fonts/source-han-sans-sc-bold-subset.woff2', { weight: '700' }],
     ];
-    return Array.from({ length: 7 }, (_, y) => glyphs.map((g) => g[y]).join(' ')
-      .replace(/1/g, '█').replace(/0/g, ' ')).join('\n');
-  }
+    return Promise.all(fonts.map(function (f) {
+      try {
+        const face = new FontFace(f[0], 'url(' + chrome.runtime.getURL(f[1]) + ')', f[2]);
+        return face.load().then(function (ff) { document.fonts.add(ff); return ff; })
+          .catch(function () { return null; });
+      } catch (e) { return Promise.resolve(null); }
+    }));
+  })();
+
+  let fx = null;
 
   function startMatrixFx() {
-    if (matrixTimer) clearInterval(matrixTimer);
-    const pre = root && root.querySelector('.ssw-ascii');
-    if (!pre) return;
-    const pattern = pre.dataset.base;
-    pre.textContent = '';
-    const waveChars = [];
-    let x = 0, y = 0;
-    for (const ch of pattern) {
-      if (ch === '\n') {
-        pre.appendChild(document.createTextNode('\n'));
-        x = 0; y++;
-      } else if (ch === '█') {
-        const span = el('span', 'ssw-wavechar', '·');
-        span.dataset.x = x;
-        span.dataset.y = y;
-        pre.appendChild(span);
-        waveChars.push(span);
-        x++;
-      } else {
-        pre.appendChild(document.createTextNode(' '));
-        x++;
-      }
-    }
-    const shades = ' .:-=+*#%@';
-    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const draw = () => {
-      const t = reduced ? 0 : Date.now() / 170;
-      for (const span of waveChars) {
-        const x = Number(span.dataset.x), y = Number(span.dataset.y);
-        const v = (Math.sin(x * 0.42 + y * 0.68 - t) + 1) / 2;
-        const idx = Math.max(0, Math.min(shades.length - 1, Math.floor(v * shades.length)));
-        span.textContent = shades[idx];
-        span.style.opacity = String(0.45 + v * 0.55);
-      }
-    };
-    draw();
-    if (!reduced) matrixTimer = setInterval(() => {
-      if (!root || !root.isConnected) {
-        clearInterval(matrixTimer);
-        matrixTimer = null;
-        return;
-      }
-      draw();
-    }, 65);
+    if (fx || !root) return;
+    const holder = root.querySelector('.ssw-matrix');
+    if (holder && typeof SufeFX !== 'undefined') fx = SufeFX.mount(holder);
   }
 
   function stopMatrixFx() {
-    if (matrixTimer) clearInterval(matrixTimer);
-    matrixTimer = null;
+    if (fx) { fx.stop(); fx = null; }
   }
 
   function el(tag, cls, text) {
@@ -593,12 +643,9 @@
     root = el('div'); root.id = WIDGET_ID;
     const matrix = el('div', 'ssw-matrix');
     matrix.setAttribute('aria-hidden', 'true');
-    const ascii = el('pre', 'ssw-ascii');
-    ascii.dataset.base = sufeAscii();
-    ascii.textContent = ascii.dataset.base;
-    matrix.append(ascii, el('div', 'ssw-scan'));
+    matrix.appendChild(el('div', 'ssw-scan'));
     root.appendChild(matrix);
-    const title = el('div', 'ssw-title', '上财自动登录');
+    const title = el('div', 'ssw-title', '上财自动认证');
     const tools = el('span', 'ssw-tools');
     const gear = el('span', 'ssw-link', '设置');
     gear.title = '在此填写或修改学号/密码';
@@ -833,6 +880,7 @@
 
   async function startCountdown(cfg) {
     state = 'pending';
+    await fontLoadTask;
     startPreflight(cfg);
     let remain = Math.round(AUTO_DELAY_MS / 1000);
     renderCountdown(remain, cfg);
@@ -846,6 +894,32 @@
       }
       renderCountdown(remain, cfg);
     }, 1000);
+  }
+
+  // 验证码自动重试页：像素大数字显示当前重试序号（与倒计时同款切换特效）
+  function renderVcodeRetry(t, max) {
+    ensureWidget();
+    let box = bodyEl.querySelector('.ssw-retry');
+    if (!box) {
+      bodyEl.textContent = '';
+      logEl.textContent = '';
+      actionsEl.textContent = '';
+      actionsEl.appendChild(mkBtn('停止', stopRun));
+      box = el('div', 'ssw-retry');
+      box.appendChild(el('div', 'ssw-count-kicker', '[ SUFE // RETRY SEQUENCE ]'));
+      const nums = el('div', 'ssw-retry-nums');
+      const num = el('div', 'ssw-count-num ssw-retry-num');
+      const tail = el('div', 'ssw-retry-max', '/' + max);
+      nums.append(num, tail);
+      box.appendChild(nums);
+      box.appendChild(el('div', 'ssw-count-label', '次重试 · 识别中 RETRYING'));
+      const bar = el('div', 'ssw-progress ssw-retry-bar');
+      bar.appendChild(el('span'));
+      box.appendChild(bar);
+      bodyEl.appendChild(box);
+    }
+    setCountDigit(box.querySelector('.ssw-retry-num'), t);
+    box.querySelector('.ssw-retry-max').textContent = '/' + max;
   }
 
   function renderManual() {
@@ -950,6 +1024,7 @@
   const cfg = await getCfg();
   const form = await waitForForm(20000);
   if (!form) return;
+  await fontLoadTask;
 
   try { chrome.runtime.sendMessage({ type: 'SUFE_WARMUP' }); } catch (e) { /* SW 可能尚未就绪 */ }
 
@@ -994,7 +1069,7 @@
   }
 
   if (cfg.enabled === false) {
-    renderCard('上财自动登录：自动登录已停用。', [
+    renderCard('上财自动认证：自动登录已停用。', [
       mkBtn('本次登录', () => startFlow(), true),
       mkBtn('启用', async () => {
         const c = await getCfg();

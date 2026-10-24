@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>上财自动登录 · 设置</title>
+<title>上财自动认证 · 设置</title>
 <style>
   @font-face {
     font-family: "SufePixel";
@@ -22,9 +22,9 @@
     margin: 0;
     padding: 16px;
     overflow-x: hidden;
-    color: #7dffb2;
-    background: linear-gradient(145deg, rgba(3, 15, 11, 0.6), rgba(4, 23, 16, 0.5) 58%, rgba(2, 11, 8, 0.64));
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #79b8ff;
+    background: linear-gradient(145deg, rgba(6, 15, 32, 0.64), rgba(8, 20, 42, 0.54) 58%, rgba(3, 9, 20, 0.68));
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 14px;
     backdrop-filter: blur(22px) saturate(125%);
     -webkit-backdrop-filter: blur(22px) saturate(125%);
@@ -37,7 +37,7 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    background: repeating-linear-gradient(0deg, rgba(125, 255, 178, 0.025) 0 1px, transparent 1px 4px);
+    background: repeating-linear-gradient(0deg, rgba(121, 184, 255, 0.03) 0 1px, transparent 1px 4px);
   }
   .matrix-bg {
     position: fixed;
@@ -45,27 +45,13 @@
     z-index: 0;
     overflow: hidden;
     pointer-events: none;
-    opacity: 0.18;
   }
-  .matrix-bg pre {
-    position: absolute;
-    top: 26px;
-    right: -4px;
-    margin: 0;
-    font: 8px/1.25 "SufePixel", monospace;
-    background: linear-gradient(100deg, #c0ffd7, #45d78c 48%, transparent 94%);
-    background-size: 220% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: gradient 6s ease-in-out infinite alternate;
-  }
-  .matrix-bg .wavechar { display: inline-block; min-width: 1ch; text-align: center; transition: opacity 80ms linear; }
+  .matrix-bg canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
   .matrix-bg::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: repeating-linear-gradient(0deg, rgba(125, 255, 178, 0.07) 0 1px, transparent 1px 3px);
+    background: repeating-linear-gradient(0deg, rgba(121, 184, 255, 0.08) 0 1px, transparent 1px 3px);
     mix-blend-mode: screen;
     animation: crt-flicker 180ms steps(2, end) infinite;
   }
@@ -74,34 +60,34 @@
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(180deg, transparent 46%, rgba(125, 255, 178, 0.1) 50%, transparent 54%),
-      radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.5) 100%);
+      linear-gradient(180deg, transparent 46%, rgba(121, 184, 255, 0.1) 50%, transparent 54%),
+      radial-gradient(ellipse at center, transparent 46%, rgba(0, 0, 0, 0.5) 100%);
     background-size: 100% 260%, 100% 100%;
     animation: scan 3.2s linear infinite, crt-flicker 260ms steps(2, end) infinite;
   }
   body > :not(.matrix-bg) { position: relative; z-index: 1; }
   h3 {
     margin: 0 0 14px;
-    color: #c0ffd7;
+    color: #d0e6ff;
     font-size: 14px;
     font-weight: 400;
-    text-shadow: 0 0 14px rgba(125, 255, 178, 0.35);
+    text-shadow: 0 0 14px rgba(77, 141, 255, 0.4);
   }
-  h3::before { content: ">_ "; color: #45d78c; }
-  label { display: block; margin: 10px 0 4px; color: rgba(125, 255, 178, 0.66); font-size: 10px; }
+  h3::before { content: ">_ "; color: #4d8dff; }
+  label { display: block; margin: 10px 0 4px; color: rgba(158, 197, 255, 0.78); font-size: 10px; }
   input[type="text"], input[type="password"] {
     width: 100%;
     box-sizing: border-box;
     padding: 7px 9px;
-    color: #c0ffd7;
-    caret-color: #7dffb2;
-    background: rgba(0, 8, 5, 0.62);
-    border: 1px solid rgba(125, 255, 178, 0.25);
+    color: #d0e6ff;
+    caret-color: #79b8ff;
+    background: rgba(2, 8, 20, 0.66);
+    border: 1px solid rgba(121, 184, 255, 0.28);
     border-radius: 7px;
     outline: none;
     font: 700 12px/1.5 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   }
-  input:focus { border-color: #7dffb2; box-shadow: 0 0 16px rgba(69, 215, 140, 0.14); }
+  input:focus { border-color: #79b8ff; box-shadow: 0 0 16px rgba(77, 141, 255, 0.18); }
   .pwd-wrap { position: relative; }
   .pwd-wrap input { padding-right: 54px; }
   .pwd-toggle {
@@ -111,54 +97,47 @@
     transform: translateY(-50%);
     width: auto;
     padding: 2px 6px;
-    color: #45d78c;
+    color: #4d8dff;
     background: transparent;
     border: none;
     font-size: 10px;
     cursor: pointer;
   }
-  .pwd-toggle:hover { color: #c0ffd7; background: transparent; }
-  .row { display: flex; align-items: flex-start; gap: 7px; margin: 13px 0 4px; color: rgba(125, 255, 178, 0.7); font-size: 10px; }
-  .row input { margin-top: 4px; accent-color: #45d78c; }
+  .pwd-toggle:hover { color: #d0e6ff; background: transparent; }
+  .row { display: flex; align-items: flex-start; gap: 7px; margin: 13px 0 4px; color: rgba(158, 197, 255, 0.8); font-size: 10px; }
+  .row input { margin-top: 4px; accent-color: #4d8dff; }
   .row label { margin: 0; line-height: 1.6; }
   .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
   button {
     padding: 7px 4px;
-    color: #7dffb2;
-    background: linear-gradient(135deg, rgba(69, 215, 140, 0.12), rgba(69, 215, 140, 0.03));
-    border: 1px solid rgba(125, 255, 178, 0.28);
+    color: #79b8ff;
+    background: linear-gradient(135deg, rgba(77, 141, 255, 0.16), rgba(77, 141, 255, 0.05));
+    border: 1px solid rgba(121, 184, 255, 0.32);
     border-radius: 7px;
     font: 700 11px/1.5 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
     cursor: pointer;
   }
-  button:hover { border-color: rgba(125, 255, 178, 0.72); box-shadow: 0 0 14px rgba(69, 215, 140, 0.16); }
+  button:hover { border-color: rgba(121, 184, 255, 0.78); box-shadow: 0 0 14px rgba(77, 141, 255, 0.2); }
   button.primary {
-    color: #02140b;
-    border-color: rgba(192, 255, 215, 0.8);
-    background: linear-gradient(135deg, #c0ffd7, #45d78c);
-    box-shadow: 0 0 18px rgba(69, 215, 140, 0.2);
+    color: #051226;
+    border-color: rgba(208, 230, 255, 0.85);
+    background: linear-gradient(135deg, #d0e6ff, #4d8dff);
+    box-shadow: 0 0 18px rgba(77, 141, 255, 0.24);
   }
-  #status { margin-top: 12px; color: #7dffb2; font-size: 10px; white-space: pre-wrap; word-break: break-word; }
-  #status.err { color: #c0ffd7; text-shadow: 0 0 10px rgba(192, 255, 215, 0.4); }
-  #stats { margin-top: 7px; color: rgba(125, 255, 178, 0.48); font-size: 9px; }
-  .tip { margin-top: 13px; color: rgba(125, 255, 178, 0.45); font-size: 9px; line-height: 1.65; }
+  #status { margin-top: 12px; color: #79b8ff; font-size: 10px; white-space: pre-wrap; word-break: break-word; }
+  #status.err { color: #ffd0d0; text-shadow: 0 0 10px rgba(255, 208, 208, 0.4); }
+  #stats { margin-top: 7px; color: rgba(158, 197, 255, 0.6); font-size: 9px; }
+  .tip { margin-top: 13px; color: rgba(158, 197, 255, 0.62); font-size: 9px; line-height: 1.65; }
   @keyframes crt-flicker { 0%, 100% { opacity: 0.86; } 50% { opacity: 0.72; } }
   @keyframes scan { from { background-position: 0 -160%, 0 0; } to { background-position: 0 100%, 0 0; } }
-  @keyframes gradient { from { background-position: 0% 0%; } to { background-position: 100% 100%; } }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
   }
 </style>
 </head>
 <body>
-<div class="matrix-bg" aria-hidden="true"><pre> ███  █   █ █████ █████
-█     █   █ █     █
-█     █   █ █     █
- ███  █   █ ████  ████
-    █ █   █ █     █
-    █ █   █ █     █
-████   ███  █     █████</pre></div>
-<h3>上财自动登录</h3>
+<div class="matrix-bg" aria-hidden="true"></div>
+<h3>上财自动认证</h3>
 
 <label for="username">学号</label>
 <input type="text" id="username" autocomplete="off" spellcheck="false">
@@ -185,11 +164,13 @@
 <div id="stats"></div>
 
 <div class="tip">
-  2 秒倒计时内后台预破解；未手动操作即自动进入。<br>
+  3 秒倒计时内后台预拉图 + 预识别验证码，倒计时结束即登录；<br>
+  识别未通过会自动换图立即重试（最多 10 次），仍失败才请你人工输入；<br>
   「登录」直接在当前上财登录页执行（页面未注入脚本时会自动注入，无需刷新）；<br>
-  「测试验证码」「测试滑块」只验证识别/定位能力，不提交账号。字符验证码连续低置信度时会在页面浮窗中请你人工输入。
+  「测试验证码」「测试滑块」只验证识别/定位能力，不提交账号。
 </div>
 
+<script src="sufe-fx.js"></script>
 <script src="popup.js"></script>
 </body>
 </html>

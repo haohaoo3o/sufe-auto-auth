@@ -14,10 +14,10 @@
 }
 
 #sufe-auto-login-widget {
-  --neon: #7dffb2;
-  --neon-strong: #c0ffd7;
-  --neon-dim: #45d78c;
-  --panel: rgba(3, 20, 13, 0.84);
+  --neon: #79b8ff;
+  --neon-strong: #d0e6ff;
+  --neon-dim: #4d8dff;
+  --panel: rgba(4, 14, 30, 0.86);
   position: fixed;
   top: 16px;
   right: 16px;
@@ -29,12 +29,12 @@
   isolation: isolate;
   color: var(--neon);
   background:
-    linear-gradient(145deg, rgba(3, 15, 11, 0.56), rgba(4, 23, 16, 0.46) 52%, rgba(2, 11, 8, 0.6));
-  border: 1px solid rgba(255, 255, 255, 0.12);
+    linear-gradient(145deg, rgba(6, 15, 32, 0.6), rgba(8, 20, 42, 0.5) 52%, rgba(3, 9, 20, 0.64));
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 14px;
   box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.36),
-    0 18px 52px rgba(0, 0, 0, 0.46);
+    0 0 0 1px rgba(0, 0, 0, 0.38),
+    0 18px 52px rgba(0, 0, 0, 0.48);
   backdrop-filter: blur(24px) saturate(125%);
   -webkit-backdrop-filter: blur(24px) saturate(125%);
   font: 700 12px/1.7 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
@@ -50,44 +50,28 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(125, 255, 178, 0.025) 0 1px, transparent 1px 4px);
+  background: repeating-linear-gradient(0deg, rgba(121, 184, 255, 0.03) 0 1px, transparent 1px 4px);
 }
 
+/* ── SUFE 像素流光背景（sufe-fx.js 绘制 canvas.ssw-fx） ── */
 #sufe-auto-login-widget .ssw-matrix {
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  opacity: 0.2;
 }
-
-#sufe-auto-login-widget .ssw-ascii {
+#sufe-auto-login-widget .ssw-fx {
   position: absolute;
-  top: 24px;
-  right: -4px;
-  margin: 0;
-  white-space: pre;
-  font: 8px/1.25 "SufePixel", monospace;
-  letter-spacing: 0;
-  background: linear-gradient(100deg, var(--neon-strong), var(--neon-dim) 46%, transparent 92%);
-  background-size: 220% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: sufe-gradient 6s ease-in-out infinite alternate;
-}
-#sufe-auto-login-widget .ssw-wavechar {
-  display: inline-block;
-  min-width: 1ch;
-  text-align: center;
-  transition: opacity 80ms linear;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 #sufe-auto-login-widget .ssw-matrix::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(0deg, rgba(125, 255, 178, 0.07) 0 1px, transparent 1px 3px);
+  background: repeating-linear-gradient(0deg, rgba(121, 184, 255, 0.08) 0 1px, transparent 1px 3px);
   mix-blend-mode: screen;
   animation: sufe-crt-flicker 180ms steps(2, end) infinite;
 }
@@ -95,7 +79,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.5) 100%);
+  background: radial-gradient(ellipse at center, transparent 52%, rgba(0, 0, 0, 0.3) 100%);
   animation: sufe-crt-flicker 260ms steps(2, end) infinite;
 }
 
@@ -105,10 +89,10 @@
   right: 0;
   top: -24px;
   height: 24px;
-  border-top: 1px solid rgba(125, 255, 178, 0.08);
-  border-bottom: 1px solid rgba(125, 255, 178, 0.16);
-  background: linear-gradient(180deg, transparent, rgba(125, 255, 178, 0.04) 25%, rgba(125, 255, 178, 0.2) 52%, rgba(125, 255, 178, 0.05) 78%, transparent);
-  box-shadow: 0 0 18px rgba(125, 255, 178, 0.12);
+  border-top: 1px solid rgba(121, 184, 255, 0.1);
+  border-bottom: 1px solid rgba(121, 184, 255, 0.2);
+  background: linear-gradient(180deg, transparent, rgba(121, 184, 255, 0.05) 25%, rgba(121, 184, 255, 0.22) 52%, rgba(121, 184, 255, 0.06) 78%, transparent);
+  box-shadow: 0 0 18px rgba(77, 141, 255, 0.14);
   animation: sufe-scan 3.2s linear infinite, sufe-crt-flicker 200ms steps(2, end) infinite;
 }
 
@@ -122,7 +106,7 @@
   color: var(--neon-strong);
   font-size: 12px;
   line-height: 1.4;
-  text-shadow: 0 0 12px rgba(125, 255, 178, 0.35);
+  text-shadow: 0 0 12px rgba(77, 141, 255, 0.4);
 }
 #sufe-auto-login-widget .ssw-title::before { content: ">_"; margin-right: 8px; color: var(--neon-dim); }
 #sufe-auto-login-widget .ssw-tools { display: flex; align-items: center; gap: 10px; margin-left: auto; }
@@ -148,7 +132,7 @@
   max-height: 126px;
   overflow-y: auto;
   margin: 4px 14px;
-  color: rgba(125, 255, 178, 0.58);
+  color: rgba(158, 197, 255, 0.72);
   font-size: 10px;
   line-height: 1.55;
   scrollbar-width: thin;
@@ -165,37 +149,37 @@
 }
 #sufe-auto-login-widget .ssw-btn {
   appearance: none;
-  border: 1px solid rgba(125, 255, 178, 0.28);
+  border: 1px solid rgba(121, 184, 255, 0.32);
   border-radius: 7px;
   padding: 5px 11px;
   color: var(--neon);
-  background: linear-gradient(135deg, rgba(69, 215, 140, 0.1), rgba(69, 215, 140, 0.025));
-  box-shadow: inset 0 0 12px rgba(125, 255, 178, 0.03);
+  background: linear-gradient(135deg, rgba(77, 141, 255, 0.14), rgba(77, 141, 255, 0.04));
+  box-shadow: inset 0 0 12px rgba(121, 184, 255, 0.05);
   font: 700 11px/1.5 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   cursor: pointer;
   transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
 }
 #sufe-auto-login-widget .ssw-btn:hover {
-  border-color: rgba(125, 255, 178, 0.72);
-  box-shadow: 0 0 14px rgba(69, 215, 140, 0.16);
+  border-color: rgba(121, 184, 255, 0.78);
+  box-shadow: 0 0 14px rgba(77, 141, 255, 0.2);
 }
 #sufe-auto-login-widget .ssw-btn:active { transform: translateY(1px); }
 #sufe-auto-login-widget .ssw-btn:disabled { opacity: 0.45; cursor: wait; }
 #sufe-auto-login-widget .ssw-btn-primary {
-  color: #02140b;
-  border-color: rgba(192, 255, 215, 0.8);
-  background: linear-gradient(135deg, rgba(192, 255, 215, 0.96), rgba(69, 215, 140, 0.86));
-  box-shadow: 0 0 18px rgba(69, 215, 140, 0.2);
+  color: #051226;
+  border-color: rgba(208, 230, 255, 0.85);
+  background: linear-gradient(135deg, rgba(208, 230, 255, 0.96), rgba(77, 141, 255, 0.9));
+  box-shadow: 0 0 18px rgba(77, 141, 255, 0.24);
 }
-#sufe-auto-login-widget .ssw-btn-primary:hover { box-shadow: 0 0 22px rgba(125, 255, 178, 0.34); }
+#sufe-auto-login-widget .ssw-btn-primary:hover { box-shadow: 0 0 22px rgba(121, 184, 255, 0.38); }
 
 #sufe-auto-login-widget .ssw-settings {
   position: relative;
   z-index: 1;
   display: none;
   margin-top: 3px;
-  border-top: 1px solid rgba(125, 255, 178, 0.16);
-  background: linear-gradient(180deg, rgba(69, 215, 140, 0.055), transparent);
+  border-top: 1px solid rgba(121, 184, 255, 0.18);
+  background: linear-gradient(180deg, rgba(77, 141, 255, 0.07), transparent);
 }
 #sufe-auto-login-widget .ssw-settings.ssw-open { display: block; padding-top: 8px; }
 #sufe-auto-login-widget .ssw-settings .ssw-line { padding: 0 14px; color: var(--neon-dim); font-size: 10px; }
@@ -208,31 +192,32 @@
   padding: 7px 9px;
   color: var(--neon-strong);
   caret-color: var(--neon);
-  background: rgba(0, 8, 5, 0.58);
-  border: 1px solid rgba(125, 255, 178, 0.24);
+  background: rgba(2, 8, 20, 0.62);
+  border: 1px solid rgba(121, 184, 255, 0.28);
   border-radius: 7px;
   outline: none;
   font: 700 12px/1.5 "SufePixel", "SufeHei", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   transition: border-color 120ms ease, box-shadow 120ms ease;
 }
 #sufe-auto-login-widget .ssw-cinput::placeholder,
-#sufe-auto-login-widget .ssw-vinput::placeholder { color: rgba(125, 255, 178, 0.36); }
+#sufe-auto-login-widget .ssw-vinput::placeholder { color: rgba(121, 184, 255, 0.4); }
 #sufe-auto-login-widget .ssw-cinput:focus,
 #sufe-auto-login-widget .ssw-vinput:focus {
   border-color: var(--neon);
-  box-shadow: 0 0 0 2px rgba(69, 215, 140, 0.12), 0 0 16px rgba(69, 215, 140, 0.12);
+  box-shadow: 0 0 0 2px rgba(77, 141, 255, 0.14), 0 0 16px rgba(77, 141, 255, 0.16);
 }
 #sufe-auto-login-widget .ssw-vbox { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 8px 0 4px; }
 #sufe-auto-login-widget .ssw-vimg {
   width: 220px;
   height: 94px;
-  background: rgba(0, 8, 5, 0.7);
-  border: 1px solid rgba(125, 255, 178, 0.25);
+  background: rgba(2, 8, 20, 0.72);
+  border: 1px solid rgba(121, 184, 255, 0.28);
   border-radius: 8px;
   cursor: pointer;
 }
 #sufe-auto-login-widget .ssw-vinput { width: 174px; letter-spacing: 7px; text-align: center; text-transform: uppercase; }
 
+/* ── 倒计时 ── */
 #sufe-auto-login-widget .ssw-countdown { padding: 8px 0 4px; text-align: center; }
 #sufe-auto-login-widget .ssw-count-kicker { color: var(--neon-dim); font-size: 9px; letter-spacing: 0.12em; }
 #sufe-auto-login-widget .ssw-count-num {
@@ -244,39 +229,68 @@
   font-size: 54px;
   line-height: 1;
   letter-spacing: 0.08em;
-  text-shadow: 0 0 8px rgba(125, 255, 178, 0.85), 0 0 26px rgba(69, 215, 140, 0.55), 0 0 54px rgba(69, 215, 140, 0.28);
+  text-shadow: 0 0 3px rgba(2, 8, 20, 0.95), 0 0 8px rgba(121, 184, 255, 0.9), 0 0 26px rgba(77, 141, 255, 0.6), 0 0 54px rgba(77, 141, 255, 0.3);
   animation: sufe-pulse 1s steps(2, end) infinite;
 }
 #sufe-auto-login-widget .ssw-count-num > span { grid-area: 1 / 1; }
 #sufe-auto-login-widget .ssw-digit-in { animation: sufe-digit-in 320ms cubic-bezier(0.2, 0.85, 0.25, 1) both; }
 #sufe-auto-login-widget .ssw-digit-out { animation: sufe-digit-out 280ms cubic-bezier(0.4, 0, 0.8, 0.2) both; }
 #sufe-auto-login-widget .ssw-count-label { color: var(--neon); font-size: 10px; }
-#sufe-auto-login-widget .ssw-progress { height: 3px; margin: 12px 0 8px; overflow: hidden; background: rgba(125, 255, 178, 0.1); }
+#sufe-auto-login-widget .ssw-progress { height: 3px; margin: 12px 0 8px; overflow: hidden; background: rgba(121, 184, 255, 0.12); }
 #sufe-auto-login-widget .ssw-progress > span {
   display: block;
   height: 100%;
   background: linear-gradient(90deg, transparent, var(--neon-dim), var(--neon-strong));
   box-shadow: 0 0 12px var(--neon);
-  animation: sufe-progress-fill 2s linear forwards;
+  animation: sufe-progress-fill 3s linear forwards;
 }
-#sufe-auto-login-widget .ssw-preflight { color: rgba(125, 255, 178, 0.62); font-size: 10px; min-height: 18px; }
+#sufe-auto-login-widget .ssw-preflight { color: rgba(158, 197, 255, 0.72); font-size: 10px; min-height: 18px; }
 #sufe-auto-login-widget .ssw-username { color: var(--neon-dim); font-size: 10px; margin-top: 3px; }
+
+/* ── 验证码重试页（像素大数字，同款切换特效） ── */
+#sufe-auto-login-widget .ssw-retry { padding: 8px 0 4px; text-align: center; }
+#sufe-auto-login-widget .ssw-retry-nums {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  margin: 8px 0 4px;
+}
+#sufe-auto-login-widget .ssw-retry-num {
+  min-width: 2.2em;
+  margin: 0;
+  font-size: 44px;
+  color: var(--neon-strong);
+  text-shadow: 0 0 3px rgba(2, 8, 20, 0.95), 0 0 8px rgba(121, 184, 255, 0.95), 0 0 28px rgba(77, 141, 255, 0.7), 0 0 56px rgba(77, 141, 255, 0.35);
+  animation: sufe-pulse 0.8s steps(2, end) infinite;
+}
+#sufe-auto-login-widget .ssw-retry-max {
+  color: var(--neon-dim);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+}
+#sufe-auto-login-widget .ssw-retry-bar { margin: 10px 0 6px; background: rgba(121, 184, 255, 0.12); }
+#sufe-auto-login-widget .ssw-retry-bar > span {
+  width: 34%;
+  animation: sufe-retry-slide 0.9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
 
 #sufe-auto-login-widget .ssw-success { position: relative; padding: 12px 0 6px; text-align: center; }
 #sufe-auto-login-widget .ssw-success-kicker { color: var(--neon-dim); font-size: 9px; letter-spacing: 0.1em; }
 #sufe-auto-login-widget .ssw-success-title {
-  margin: 12px 0 8px;
+  margin: 12px 0 14px;
   color: var(--neon-strong);
   font-size: 21px;
   line-height: 1.35;
   letter-spacing: 0.04em;
-  text-shadow: 0 0 10px rgba(125, 255, 178, 0.8), 0 0 30px rgba(69, 215, 140, 0.5);
+  text-shadow: 0 0 10px rgba(121, 184, 255, 0.85), 0 0 30px rgba(77, 141, 255, 0.55);
   animation: sufe-glitch 2.2s steps(1, end) infinite;
 }
 #sufe-auto-login-widget .ssw-success-sub { color: var(--neon); font-size: 11px; }
 #sufe-auto-login-widget .ssw-pixels { margin: 10px 0 2px; color: var(--neon-dim); letter-spacing: 0.24em; animation: sufe-blink 1.2s steps(2, end) infinite; }
 
 @keyframes sufe-progress-fill { from { width: 0; } to { width: 100%; } }
+@keyframes sufe-retry-slide { from { transform: translateX(-160%); } to { transform: translateX(260%); } }
 @keyframes sufe-digit-in {
   from { opacity: 0; transform: translateY(42%) scaleY(0.72); filter: brightness(2); }
   to { opacity: 1; transform: translateY(0) scaleY(1); filter: brightness(1); }
@@ -287,12 +301,11 @@
 }
 @keyframes sufe-crt-flicker { 0%, 100% { opacity: 0.86; } 50% { opacity: 0.72; } }
 @keyframes sufe-scan { from { transform: translateY(0); } to { transform: translateY(460px); } }
-@keyframes sufe-gradient { from { background-position: 0% 0%; opacity: 0.7; } to { background-position: 100% 100%; opacity: 1; } }
 @keyframes sufe-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.78; } }
 @keyframes sufe-blink { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
 @keyframes sufe-glitch {
-  0%, 88%, 100% { transform: translate(0); text-shadow: 0 0 10px rgba(125, 255, 178, 0.8), 0 0 30px rgba(69, 215, 140, 0.5); }
-  90% { transform: translate(-1px, 0); text-shadow: 2px 0 0 rgba(69, 215, 140, 0.8), -2px 0 0 rgba(192, 255, 215, 0.45); }
+  0%, 88%, 100% { transform: translate(0); text-shadow: 0 0 10px rgba(121, 184, 255, 0.85), 0 0 30px rgba(77, 141, 255, 0.55); }
+  90% { transform: translate(-1px, 0); text-shadow: 2px 0 0 rgba(77, 141, 255, 0.85), -2px 0 0 rgba(208, 230, 255, 0.5); }
   92% { transform: translate(1px, 0); }
   94% { transform: translate(0); }
 }

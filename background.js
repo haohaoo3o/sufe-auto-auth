@@ -1,4 +1,4 @@
-// 上财自动登录 · 后台：模型加载与离线推理、打开设置页
+// 上财自动认证 · 后台：模型加载与离线推理、打开设置页
 importScripts('sufe-crnn.js');
 
 let modelReady = null;

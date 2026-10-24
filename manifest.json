@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "上财自动登录",
-  "version": "5.0.0",
-  "description": "检测上海财经大学统一认证（login.sufe.edu.cn）登录页，自动完成字符验证码或滑块验证并登录。仅限本人账号使用。",
+  "name": "上财自动认证",
+  "version": "6.0.0",
+  "description": "检测上海财经大学统一认证（login.sufe.edu.cn）登录页，自动识别字符验证码并登录（识别失败自动重试，超限转人工）。仅限本人账号使用。",
   "permissions": [
     "storage",
     "scripting"
@@ -15,7 +15,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "上财自动登录 · 设置",
+    "default_title": "上财自动认证 · 设置",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
@@ -42,6 +42,7 @@
         "sufe-crypto.js",
         "sufe-cnn-weights.js",
         "sufe-cnn.js",
+        "sufe-fx.js",
         "content.js"
       ],
       "css": [

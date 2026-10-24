@@ -1,5 +1,5 @@
 /*
- * 上财自动滑块 · RSA(PKCS#1 v1.5) 密码加密模块
+ * 上财自动认证 · RSA(PKCS#1 v1.5) 密码加密模块
  * 供内容脚本与 Node 自测脚本共用；纯 JS 实现，无任何依赖。
  * 背景：服务端下发 1024-bit RSA 公钥（Base64/DER，SPKI 或 PKCS#1 格式），
  *       浏览器 WebCrypto 不支持 RSAES-PKCS1-v1_5，故自行实现 modPow。

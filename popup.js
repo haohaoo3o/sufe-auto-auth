@@ -12,45 +12,10 @@ const $testVcode = document.getElementById('testvcode');
 const $status = document.getElementById('status');
 const $stats = document.getElementById('stats');
 
-(function startMatrixWave() {
-  const pre = document.querySelector('.matrix-bg pre');
-  if (!pre) return;
-  const pattern = pre.textContent;
-  pre.textContent = '';
-  const chars = [];
-  let x = 0, y = 0;
-  for (const ch of pattern) {
-    if (ch === '\n') {
-      pre.appendChild(document.createTextNode('\n'));
-      x = 0; y++;
-    } else if (ch === '█') {
-      const span = document.createElement('span');
-      span.className = 'wavechar';
-      span.dataset.x = x;
-      span.dataset.y = y;
-      span.textContent = '·';
-      pre.appendChild(span);
-      chars.push(span);
-      x++;
-    } else {
-      pre.appendChild(document.createTextNode(' '));
-      x++;
-    }
-  }
-  const shades = ' .:-=+*#%@';
-  function draw() {
-    const t = Date.now() / 170;
-    for (const span of chars) {
-      const v = (Math.sin(Number(span.dataset.x) * 0.42 + Number(span.dataset.y) * 0.68 - t) + 1) / 2;
-      span.textContent = shades[Math.min(shades.length - 1, Math.floor(v * shades.length))];
-      span.style.opacity = String(0.45 + v * 0.55);
-    }
-  }
-  draw();
-  if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    setInterval(draw, 65);
-  }
-})();
+// SUFE 像素流光背景（canvas 60fps，蓝色霓虹）
+if (typeof SufeFX !== 'undefined') {
+  SufeFX.mount(document.querySelector('.matrix-bg'));
+}
 
 function setStatus(text, isErr) {
   $status.textContent = text;

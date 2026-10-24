@@ -1,5 +1,5 @@
 /*
- * 上财自动滑块 · 缺口定位 CNN（纯 JS 前向，无依赖）
+ * 上财自动认证 · 缺口定位 CNN（滑块兜底，纯 JS 前向，无依赖）
  *
  * 输入：整张背景图（不做裁剪），area-resize 到 256x128 后归一 [-1,1]（CHW），
  * 结构：4×[Conv3x3+ReLU → 高度方向 MaxPool] → 全高 MaxPool → Conv1x1 → 256 列 logits

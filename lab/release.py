@@ -10,7 +10,7 @@ import sys
 import urllib.request
 from urllib.error import HTTPError
 
-OWNER, REPO = "haohaoo3o", "sufe-auto-slider"
+OWNER, REPO = "haohaoo3o", "sufe-auto-auth"
 # 默认直连；需要时用 SUFE_PROXY=http://127.0.0.1:7890 指定代理
 PROXY = os.environ.get("SUFE_PROXY", "").strip()
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -18,40 +18,30 @@ DIST = os.environ.get("SUFE_DIST") or next(
     (p for p in (os.path.join(os.path.dirname(ROOT), "dist"), os.path.join(ROOT, "dist"))
      if os.path.isdir(p)), os.path.join(ROOT, "dist"))
 
-BODY = """## 上财自动滑块 4.0
+BODY = """## 上财自动认证 6.0
 
-**架构反转：缺口定位改为「经典分割严格优先 + CNN 兜底」**——多数验证码本地 2ms 内定位，CNN 只在渲染异常时才出场。
+**更名：上财自动滑块 → 上财自动认证**（服务端已改用字符验证码，滑块保留为兜底）。本版为体验大改版。
 
 ### 亮点
 
-- **分割优先（快 515 倍 + 更准）**：缺口模板在图中恒为 ~96×93、面积 ~5590（382 张实测 99% 一致）；「形状/面积合规且全场唯一」的平坦纯白连通块即可信 → 本地 **~2ms、误差 0.000px**（对比整图 CNN：0.46px / 1.76s）
-- **懒执行候选流**：严格分割 → 宽松分割 → CNN（~1-2s，仅必要时）→ 盲试；同一 token 连续校验、失败不作废
-- **CNN 兜底经过验证**：把缺口涂灰模拟渲染变化后，严格分割 12/12 正确拒绝，CNN 兜底 12/12 误差 ≤2px
-- 保留 v3 的整图 CNN（4.9 万参数，回归「可通过窗口中心」= 缺口左缘-3，线上实测窗口 `左缘-5 … 左缘-1`）
-- 交互同 v3：2 秒倒计时、点击/打字取消、弹窗免刷新「登录」、密码显隐、首探命中率统计
-
-### 实测（本版）
-
-| 场景 | 结果 |
-|---|---|
-| 留出集 76 张 | 严格分割 **75/76 可信、误差 0.000px、2ms** |
-| 真实浏览器内（登录页，8 轮） | **8/8 首探测通过**，全部走 2ms 分割路径，0 次触发 CNN |
-| 渲染变化模拟（缺口涂灰，12 张） | 分割全部正确拒绝 → CNN 兜底 12/12 误差 ≤2px |
-| v3 基线（供对照） | 留出集 CNN MAE 0.47px；在线 12/12；浏览器 5/5 |
+- **流动 ASCII 装饰背景**：canvas 60fps 重写（旧版为 span 逐字符 65ms 定时器，卡顿且昏暗）——全面板极暗字符雨（@!%# 缓慢下落变字）+ 右上角流动字符组成的低明度 SUFE 装饰
+- **图标重绘**：蓝色像素风挂锁（16/48/128）
+- **像素字体修复**：内容脚本 CSS 的相对 url() 在页面上下文解析不到扩展资源导致像素字体从未生效，现改用 FontFace + chrome.runtime.getURL 注入——英文/数字为 Press Start 2P 像素风，中文保持粗体思源黑
+- **3 秒倒计时 + 秒登录**：倒计时期间后台并行「拉验证码图 → CRNN 预识别 → 预取登录配置」，浮窗实时显示预识别结果，倒计时结束即刻提交
+- **识别失败无间隔自动重试**：识别未通过立即换图再识别（不等待），连试 10 次仍失败才转人工输入；重试页为像素大数字特效（与倒计时同款）
+- **主题色绿色 → 蓝色**：全套蓝色霓虹（面板/按钮/光效/扫描线），对比度按可读性校准
 
 ### 安装
 
-1. 下载下方 `sufe-auto-slider-v4.0.0.zip` 解压
-2. Chrome → `chrome://extensions/` → 开启「开发者模式」→「加载已解压的扩展程序」→ 选择解压出的 `sufe-auto-slider` 文件夹（或把 `.crx` 拖进扩展页）
+1. 下载下方 `sufe-auto-auth-v6.0.0.zip` 解压
+2. Chrome → `chrome://extensions/` → 开启「开发者模式」→「加载已解压的扩展程序」→ 选择解压出的 `sufe-auto-auth` 文件夹（或把 `.crx` 拖进扩展页）
 3. 点击工具栏扩展图标，填写学号、密码
 
 > 仅供本人账号的个人自动化使用；扩展只向 login.sufe.edu.cn 提交数据，密码仅存本机 `chrome.storage.local`。
 
-**升级说明**：与 v1/v2/v3 使用同一签名密钥（扩展 ID `nebckpodbmebhnfaljnmajlpcmbmolfc` 不变），可直接覆盖升级。
-
 ### 致谢
 
-- **Yanzhe Lu**（上海财经大学，人工智能专业）：提出并实现了「**卷积 + 池化 CNN 定位缺口**」的整图输入方案（社区 v2.1.0 分支），并带来网格探测、免刷新注入等交互改进。本仓库 v3 的整图 CNN 即在这一思路基础上重新实现并重训（该模型在 v4 中继续作为兜底），特此致谢。
+- **Yanzhe Lu**（上海财经大学，人工智能专业）：提出并实现了「**卷积 + 池化 CNN 定位缺口**」的整图输入方案（社区 v2.1.0 分支）。本仓库 v3 的整图 CNN 即在这一思路基础上重新实现并重训，特此致谢。
 """
 
 
@@ -81,9 +71,9 @@ def api(method, url, data=None, token_=None, ctype="application/json"):
 
 
 def main():
-    ver = sys.argv[1] if sys.argv[1:] else "4.0.0"
+    ver = sys.argv[1] if sys.argv[1:] else "6.0.0"
     tag = "v" + ver
-    title = os.environ.get("SUFE_RELEASE_TITLE", "上财自动滑块").strip()
+    title = os.environ.get("SUFE_RELEASE_TITLE", "上财自动认证").strip()
     tk = token()
     rel = api("POST", f"https://api.github.com/repos/{OWNER}/{REPO}/releases", json.dumps({
         "tag_name": tag, "name": f"{tag} · {title}", "body": BODY,
@@ -91,7 +81,7 @@ def main():
     }).encode(), tk)
     print("release:", rel.get("html_url") or rel)
     rid = rel["id"]
-    for name in (f"sufe-auto-slider-v{ver}.zip", f"sufe-auto-slider-v{ver}.crx"):
+    for name in (f"sufe-auto-auth-v{ver}.zip", f"sufe-auto-auth-v{ver}.crx"):
         path = os.path.join(DIST, name)
         if not os.path.exists(path):
             print("!! 缺少附件，跳过：", path)
